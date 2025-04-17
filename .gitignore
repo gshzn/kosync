@@ -1,1 +1,4 @@
 .idea/
+.python-version
+access_log.jsonl
+.venv/
