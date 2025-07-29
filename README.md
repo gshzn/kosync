@@ -1,3 +1,4 @@
 # KoSync
 
-Sync your ebooks to your Kobo with ease. Inspired by calibre-web.
+Allows readers to automatically send files to their Kobo eReaders
+
