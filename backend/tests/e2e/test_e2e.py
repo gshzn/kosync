@@ -59,6 +59,11 @@ def test_create_account(app_client: TestClient) -> None:
     )
 
     assert response.is_success
-    assert response.json()["access_token"]
+    assert (access_token := response.json()["access_token"])
 
-    response = app_client.post("/auth/me")
+    response = app_client.get("/auth/me", headers={
+        "Authorization": f"Bearer {access_token}"
+    })
+
+    assert response.is_success
+    assert response.json()["email"] == username

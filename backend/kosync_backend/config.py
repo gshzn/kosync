@@ -18,9 +18,6 @@ class Settings(BaseSettings):
     # CORS
     allowed_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
-    class Config:
-        env_file = ".env"
-
 
 @functools.cache
 def get_settings() -> Settings:

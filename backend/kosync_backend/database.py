@@ -1,7 +1,9 @@
+import contextlib
 from typing import Annotated
 import uuid
-from fastapi import Depends
+from fastapi import Depends, FastAPI
 from sqlalchemy import (
+    Engine,
     create_engine,
     Column,
     Integer,
@@ -11,8 +13,7 @@ from sqlalchemy import (
     LargeBinary,
     Boolean,
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session, relationship
+from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy import ForeignKey
 from collections.abc import Generator
@@ -25,15 +26,18 @@ Base = declarative_base()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False)
 
 
-def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Session]:
-    engine = create_engine(
+def initialise_db(settings: Settings) -> Generator[None]:
+    Base.metadata.create_all(bind=get_engine(settings))
+
+
+def get_engine(settings: Settings) -> Engine:
+    return create_engine(
         settings.database_url, connect_args={"check_same_thread": False}
     )
 
-    # Create tables
-    Base.metadata.create_all(bind=engine)
 
-    db = SessionLocal(bind=engine)
+def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Session]:
+    db = SessionLocal(bind=get_engine(settings))
     try:
         yield db
     finally:
@@ -47,7 +51,6 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     access_token = Column(String, index=True, default=lambda: uuid.uuid4().hex)
-    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

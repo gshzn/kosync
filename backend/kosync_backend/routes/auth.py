@@ -7,8 +7,8 @@ from kosync_backend.database import get_db, User
 from kosync_backend.schemas import UserCreate, User as UserSchema, Token
 from kosync_backend.auth import (
     authenticate_user,
+    get_current_user,
     get_password_hash,
-    get_current_active_user,
 )
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
@@ -49,5 +49,5 @@ def token(
 
 
 @router.get("/me", response_model=UserSchema)
-def read_users_me(current_user: User = Depends(get_current_active_user)):
+def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user

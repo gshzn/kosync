@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from kosync_backend.database import get_db, User, Book
 from kosync_backend.schemas import Book as BookSchema, BookWithCover
-from kosync_backend.auth import get_current_active_user
+from kosync_backend.auth import get_current_user
 from kosync_backend.epub import (
     extract_epub_metadata,
     extract_epub_cover,
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/books", tags=["books"])
 @router.post("/upload", response_model=BookSchema)
 async def upload_book(
     file: UploadFile = File(...),
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     # Validate file type
@@ -97,7 +97,7 @@ async def upload_book(
 
 @router.get("/", response_model=List[BookWithCover])
 def get_user_books(
-    current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     books = db.query(Book).filter(Book.owner_id == current_user.id).all()
 
@@ -127,7 +127,7 @@ def get_user_books(
 @router.delete("/{book_id}")
 def delete_book(
     book_id: int,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     book = (
@@ -155,7 +155,7 @@ def delete_book(
 @router.get("/{book_id}", response_model=BookWithCover)
 def get_book(
     book_id: int,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     book = (
