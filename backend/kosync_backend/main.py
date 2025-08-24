@@ -4,7 +4,7 @@ from kosync_backend.routes import auth, books
 app = FastAPI(
     title="KoSync API",
     description="EPUB management and synchronization API",
-    version="0.1.0"
+    version="0.1.0",
 )
 
 # Include routers

@@ -1,8 +1,16 @@
-import functools
 from typing import Annotated
 import uuid
 from fastapi import Depends
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, LargeBinary, Boolean
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Text,
+    LargeBinary,
+    Boolean,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.sql import func
@@ -18,7 +26,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False)
 
 
 def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Session]:
-    engine = create_engine(settings.database_url, connect_args={"check_same_thread": False})
+    engine = create_engine(
+        settings.database_url, connect_args={"check_same_thread": False}
+    )
 
     # Create tables
     Base.metadata.create_all(bind=engine)
@@ -59,7 +69,7 @@ class Book(Base):
     file_path = Column(String, nullable=False)  # Path to the EPUB file
     file_size = Column(Integer)
     upload_date = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     # Foreign key to User
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates="books")

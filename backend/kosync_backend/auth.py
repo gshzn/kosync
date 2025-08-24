@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from typing import Optional
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -21,18 +20,17 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
 
 def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     user = db.query(User).filter(User.email == email).first()
-    
+
     if not user:
         return None
-    
+
     if not pwd_context.verify(password, user.hashed_password):
         return None
     return user
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme), 
-    db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -44,11 +42,13 @@ async def get_current_user(
 
     if user is None:
         raise credentials_exception
-    
+
     return user
 
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
+async def get_current_active_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

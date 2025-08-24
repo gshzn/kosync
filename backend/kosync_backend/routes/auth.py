@@ -1,4 +1,3 @@
-from datetime import timedelta
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -7,9 +6,9 @@ from sqlalchemy.orm import Session
 from kosync_backend.database import get_db, User
 from kosync_backend.schemas import UserCreate, User as UserSchema, Token
 from kosync_backend.auth import (
-    authenticate_user, 
+    authenticate_user,
     get_password_hash,
-    get_current_active_user
+    get_current_active_user,
 )
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
@@ -21,27 +20,23 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
-    
+
     # Create new user
     hashed_password = get_password_hash(user.password)
-    db_user = User(
-        email=user.email,
-        hashed_password=hashed_password
-    )
+    db_user = User(email=user.email, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    
+
     return db_user
 
 
 @router.post("/token", response_model=Token)
 def token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
-    db: Session = Depends(get_db)
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Session = Depends(get_db),
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:

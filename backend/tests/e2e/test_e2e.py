@@ -11,7 +11,7 @@ from kosync_backend.main import app as kosync_backend_app
 @contextlib.contextmanager
 def updated_environment(environ: dict[str, str]) -> Generator[None]:
     """
-    Temporarily updates the specified environment variables, and 
+    Temporarily updates the specified environment variables, and
     sets it back to the previous state afterwards.
     """
     old_env = os.environ.copy()
@@ -28,7 +28,7 @@ def updated_environment(environ: dict[str, str]) -> Generator[None]:
 @pytest.fixture(scope="session")
 def app_client() -> Generator[TestClient]:
     sql_path = Path("/tmp/kosync.db")
-    
+
     if sql_path.exists():
         sql_path.unlink()
 
@@ -37,25 +37,28 @@ def app_client() -> Generator[TestClient]:
             yield client
 
     sql_path.unlink()
-        
+
 
 def test_create_account(app_client: TestClient) -> None:
-    response = app_client.post("/auth/register", json={
-        "email": (username := "foo@bar.baz"),
-        "password": (password := "foobarbaz")
-    })
+    response = app_client.post(
+        "/auth/register",
+        json={
+            "email": (username := "foo@bar.baz"),
+            "password": (password := "foobarbaz"),
+        },
+    )
 
     assert response.is_success
 
-    response = app_client.post("/auth/token", data={
-        "username": username,
-        "password": password,
-    })
+    response = app_client.post(
+        "/auth/token",
+        data={
+            "username": username,
+            "password": password,
+        },
+    )
 
     assert response.is_success
     assert response.json()["access_token"]
 
     response = app_client.post("/auth/me")
-
-
-
