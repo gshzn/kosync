@@ -22,6 +22,11 @@ func main() {
 		return
 	}
 
+	err := ShowDialog("Starting synchronisation", "This might take a while, please press OK to confirm.", "OK")
+	if err != nil {
+		panic(err)
+	}
+
 	currentExecutable, err := os.Executable()
 	if err != nil {
 		panic(err)
@@ -35,6 +40,10 @@ func main() {
 		panic(err)
 	}
 
+	err = ShowDialog("Complete!", "We synchronised 1 new book. Press OK to reload.", "OK")
+	if err != nil {
+		panic(err)
+	}
 	TriggerReload()
 
 	log.Println("Triggered reload")
