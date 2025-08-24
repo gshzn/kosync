@@ -16,7 +16,7 @@ from kosync_backend.config import get_settings
 router = APIRouter(prefix="/books", tags=["books"])
 
 
-@router.post("/upload", response_model=BookSchema)
+@router.post("", response_model=BookSchema)
 async def upload_book(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
@@ -95,7 +95,7 @@ async def upload_book(
         )
 
 
-@router.get("/", response_model=List[BookWithCover])
+@router.get("", response_model=List[BookWithCover])
 def get_user_books(
     current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
