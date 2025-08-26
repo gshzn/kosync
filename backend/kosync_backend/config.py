@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     max_file_size: int = 50000000  # 50MB
 
     # CORS
-    allowed_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    allowed_origins: list[str] = ["http://localhost"]
 
 
 @functools.cache

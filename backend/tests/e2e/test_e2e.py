@@ -6,7 +6,7 @@ from shutil import rmtree
 from fastapi.testclient import TestClient
 import pytest
 
-from kosync_backend.main import app as kosync_backend_app
+from kosync_backend.main import get_app
 
 
 @contextlib.contextmanager
@@ -38,7 +38,7 @@ def app_client() -> Generator[TestClient]:
     sql_path.parent.mkdir(parents=True, exist_ok=True)
 
     with updated_environment({"DATABASE_URL": f"sqlite:///{sql_path}", "UPLOAD_DIR": str(uploads_path)}):
-        with TestClient(kosync_backend_app) as client:
+        with TestClient(get_app()) as client:
             yield client
 
 

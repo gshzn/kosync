@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -10,8 +10,16 @@ from kosync_backend.auth import (
     get_current_user,
     get_password_hash,
 )
+from kosync_backend.routes.base import templates
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
+
+
+@router.get("/register")
+def register_view(request: Request) -> Response:
+    return templates.TemplatesResponse(
+        request=request, name="signup.html"
+    )
 
 
 @router.post("/register", response_model=UserSchema)
@@ -33,18 +41,29 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.post("/token", response_model=Token)
+@router.get("/login")
+def login_view(request: Request) -> Response:
+    return templates.TemplatesResponse(
+        request=request, name="login.html"
+    )
+
+
+@router.post("/login", response_model=Token)
 def token(
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db),
+    response: Response,
+    db: Annotated[Session, Depends(get_db)],
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        return templates.TemplatesResponse(
+            request=request, 
+            name="login.html",
+            context={"incorrect": True},
         )
+
+    response
     return {"access_token": user.access_token, "token_type": "bearer"}
 
 
