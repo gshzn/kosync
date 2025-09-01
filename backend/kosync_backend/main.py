@@ -3,7 +3,7 @@ import contextlib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from kosync_backend.routes import auth, base, books
+from kosync_backend.routes import base, books
 from kosync_backend.database import initialise_db
 from kosync_backend.config import get_settings
 
@@ -30,8 +30,6 @@ def get_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Include routers
-    app.include_router(auth.router)
     app.include_router(books.router)
     app.include_router(base.router)
 

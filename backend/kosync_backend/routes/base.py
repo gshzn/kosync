@@ -1,6 +1,7 @@
 from pathlib import Path
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 
 router = APIRouter(prefix="")
@@ -8,10 +9,8 @@ router = APIRouter(prefix="")
 templates = Jinja2Templates(directory=Path(__file__).parent.parent / "templates")
 
 @router.get("/")
-def index(request: Request):
-    return templates.TemplateResponse(
-        request=request, name="login.html"
-    )
+def index():
+    return RedirectResponse("/books")
 
 
 @router.get("/health")

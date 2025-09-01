@@ -48,15 +48,6 @@ def extract_epub_cover(file_path: str) -> Optional[bytes]:
     try:
         book = epub.read_epub(file_path)
 
-        # Try to get cover image
-        for item in book.get_items():
-            if (
-                item.get_type() == ebooklib.ITEM_COVER
-                or "cover" in item.get_name().lower()
-            ):
-                return item.get_content()
-
-        # If no cover found, try to get first image
         for item in book.get_items():
             if item.get_type() == ebooklib.ITEM_IMAGE:
                 return item.get_content()

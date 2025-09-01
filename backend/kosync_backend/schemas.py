@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import UUID4, BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -42,10 +42,9 @@ class BookCreate(BookBase):
 
 
 class Book(BookBase):
-    id: int
+    id: UUID4
     file_size: Optional[int] = None
     upload_date: datetime
-    owner_id: int
 
     model_config = ConfigDict(from_attributes=True)
 

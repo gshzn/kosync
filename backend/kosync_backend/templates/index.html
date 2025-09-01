@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoSync</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="h-full" x-data="{uploadModalOpen: false}">
+    <div class="min-h-full">
+        <nav class="border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 justify-between">
+                    <div class="flex">
+                        <div class="flex shrink-0 items-center">
+                            <span class="text-indigo-600 text-lg font-bold">KoSync</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="py-10">
+            <header>
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Dashboard</h1>
+
+                        <button x-on:click="$refs.fileInput.click()" type="button" class="cursor-pointer rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:shadow-none dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500">
+                            Upload new book
+                        </button>
+
+                        <form class="hidden" action="/books" method="POST" x-ref="form" enctype="multipart/form-data" x-on:submit="uploadModalOpen = true">
+                            <input type="file" accept=".epub" class="hidden" name="file" x-ref="fileInput" x-on:change="$refs.form.submit()">
+                        </form>
+                    </div>
+                </div>
+            </header>
+            <main>
+                <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-4">
+                        {% for book in books %}
+                            <img src="data:image;base64,{{book.cover_image_base64}}" >
+                        {% endfor %}
+                    </div>
+
+                 </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>
