@@ -1,9 +1,7 @@
 import os
 from pathlib import Path
-from typing import List
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Request
-from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from kosync_backend.database import get_db, Book
@@ -69,7 +67,6 @@ async def upload_book(
         return render_books_page(
             db, request
         ) 
-
     except Exception as e:
         # Clean up file if database operation fails
         if os.path.exists(file_path):
@@ -123,7 +120,7 @@ def delete_book(
 ):
     book = (
         db.query(Book)
-        .filter(Book.id == book_id, Book.owner_id == current_user.id)
+        .filter(Book.id == book_id)
         .first()
     )
 
@@ -150,7 +147,7 @@ def get_book(
 ):
     book = (
         db.query(Book)
-        .filter(Book.id == book_id, Book.owner_id == current_user.id)
+        .filter(Book.id == book_id)
         .first()
     )
 

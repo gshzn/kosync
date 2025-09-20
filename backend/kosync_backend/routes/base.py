@@ -1,5 +1,5 @@
 from pathlib import Path
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 

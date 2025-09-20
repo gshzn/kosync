@@ -1,7 +1,5 @@
-import contextlib
 from typing import Annotated
-import uuid
-from fastapi import Depends, FastAPI
+from fastapi import Depends
 from sqlalchemy import (
     UUID,
     Engine,
@@ -12,11 +10,9 @@ from sqlalchemy import (
     DateTime,
     Text,
     LargeBinary,
-    Boolean,
 )
-from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base
+from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from sqlalchemy.sql import func
-from sqlalchemy import ForeignKey
 from collections.abc import Generator
 
 from kosync_backend.config import Settings, get_settings
@@ -48,7 +44,7 @@ def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Se
 class Book(Base):
     __tablename__ = "books"
 
-    id = Column(UUID, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True)
     title = Column(String, nullable=False)
     author = Column(String)
     publisher = Column(String)

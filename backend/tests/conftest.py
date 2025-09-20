@@ -3,6 +3,7 @@ import contextlib
 import os
 from pathlib import Path
 from shutil import rmtree
+
 from fastapi.testclient import TestClient
 import pytest
 
@@ -27,27 +28,39 @@ def updated_environment(environ: dict[str, str]) -> Generator[None]:
 
 
 @pytest.fixture
-def app_client() -> Generator[TestClient]:
+def base_path() -> Generator[str]:
     tmp_path = Path("/tmp/kosync/")
-    sql_path = tmp_path / "kosync.db"
-    uploads_path = tmp_path / "uploads"
+
+    tmp_path.mkdir(exist_ok=True, parents=True)
+
+    yield tmp_path
 
     if tmp_path.exists():
         rmtree(tmp_path, ignore_errors=True)
 
-    sql_path.parent.mkdir(parents=True, exist_ok=True)
 
+@pytest.fixture
+def sql_path(base_path: Path) -> Generator[Path]:
+    path = base_path / "kosync.db"
+
+    yield path
+
+    path.unlink()
+
+
+@pytest.fixture
+def uploads_path(base_path: Path) -> Generator[Path]:
+    path = base_path / "uploads"
+
+    path.mkdir(parents=True, exist_ok=True)
+
+    yield path
+
+    rmtree(path)
+
+
+@pytest.fixture
+def app_client(sql_path: Path, uploads_path: Path) -> Generator[TestClient]:
     with updated_environment({"DATABASE_URL": f"sqlite:///{sql_path}", "UPLOAD_DIR": str(uploads_path)}):
         with TestClient(get_app(), raise_server_exceptions=True) as client:
             yield client
-
-
-def test_upload_books(app_client: TestClient) -> None:
-    dummy_book = Path(__file__).parent / "resources" / "Around the World in 28 Languages.epub"
-
-    response = app_client.post(
-        "/books",
-        files={"file": ("book.epub", dummy_book.read_bytes())},
-    )
-
-    assert response.is_success
