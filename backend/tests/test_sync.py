@@ -14,9 +14,12 @@ def test_synchronise_new_book(app_client: TestClient) -> None:
     response = app_client.post("/api/v1/sync", json=[])
 
     assert response.is_success
-    assert len(response.json()) == 1
 
     new_book = response.json()[0]
+
+    file_response = app_client.get(new_book["url"])
+    assert file_response.is_success
+    assert len(file_response.content) > 0
 
     response = app_client.post("/api/v1/sync", json=[new_book["id"]])
 

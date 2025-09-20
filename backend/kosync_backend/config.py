@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     # File uploads
     upload_dir: str = "./uploads"
 
+    base_url: str = "http://localhost:8000"
+
     # CORS
     allowed_origins: list[str] = ["http://localhost"]
 

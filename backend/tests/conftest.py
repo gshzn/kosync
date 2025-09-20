@@ -63,7 +63,11 @@ def uploads_path(base_path: Path) -> Generator[Path]:
 @pytest.fixture
 def app_client(sql_path: Path, uploads_path: Path) -> Generator[TestClient]:
     with updated_environment(
-        {"DATABASE_URL": f"sqlite:///{sql_path}", "UPLOAD_DIR": str(uploads_path)}
+        {
+            "DATABASE_URL": f"sqlite:///{sql_path}",
+            "UPLOAD_DIR": str(uploads_path),
+            "BASE_URL": "http://kosync.test/"
+        }
     ):
         with TestClient(get_app(), raise_server_exceptions=True) as client:
             yield client
