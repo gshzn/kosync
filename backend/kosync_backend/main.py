@@ -3,7 +3,7 @@ import contextlib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from kosync_backend.routes import base, books
+from kosync_backend.routes import base, books, sync
 from kosync_backend.database import initialise_db
 from kosync_backend.config import get_settings
 
@@ -19,7 +19,7 @@ def get_app() -> FastAPI:
         title="KoSync API",
         description="EPUB management and synchronization API",
         version="0.1.0",
-        lifespan=lifespan
+        lifespan=lifespan,
     )
 
     app.add_middleware(
@@ -32,7 +32,6 @@ def get_app() -> FastAPI:
 
     app.include_router(books.router)
     app.include_router(base.router)
+    app.include_router(sync.router)
 
     return app
-
-

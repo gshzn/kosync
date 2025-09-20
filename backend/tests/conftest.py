@@ -5,6 +5,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from fastapi.testclient import TestClient
+import httpx
 import pytest
 
 from kosync_backend.main import get_app
@@ -61,6 +62,15 @@ def uploads_path(base_path: Path) -> Generator[Path]:
 
 @pytest.fixture
 def app_client(sql_path: Path, uploads_path: Path) -> Generator[TestClient]:
-    with updated_environment({"DATABASE_URL": f"sqlite:///{sql_path}", "UPLOAD_DIR": str(uploads_path)}):
+    with updated_environment(
+        {"DATABASE_URL": f"sqlite:///{sql_path}", "UPLOAD_DIR": str(uploads_path)}
+    ):
         with TestClient(get_app(), raise_server_exceptions=True) as client:
             yield client
+
+
+def upload_book(app_client: TestClient, book: Path) -> httpx.Response:
+    return app_client.post(
+        "/books",
+        files={"file": ("book.epub", book.read_bytes())},
+    )

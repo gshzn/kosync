@@ -36,7 +36,7 @@ async def upload_book(
     file_size = len(content)
 
     # Save file to disk
-    upload_dir = get_settings().upload_dir 
+    upload_dir = get_settings().upload_dir
     os.makedirs(upload_dir, exist_ok=True)
 
     book_id = uuid4()
@@ -64,9 +64,7 @@ async def upload_book(
         db.add(db_book)
         db.commit()
 
-        return render_books_page(
-            db, request
-        ) 
+        return render_books_page(db, request)
     except Exception as e:
         # Clean up file if database operation fails
         if os.path.exists(file_path):
@@ -75,6 +73,7 @@ async def upload_book(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process EPUB file: {str(e)}",
         )
+
 
 def render_books_page(db: Session, request: Request) -> "templates.TemplateResponse":
     books = db.query(Book).all()
@@ -99,9 +98,7 @@ def render_books_page(db: Session, request: Request) -> "templates.TemplateRespo
         books_with_covers.append(BookWithCover(**book_dict))
 
     return templates.TemplateResponse(
-        request=request, 
-        name="index.html",
-        context={"books": books_with_covers}
+        request=request, name="index.html", context={"books": books_with_covers}
     )
 
 
@@ -118,11 +115,7 @@ def delete_book(
     book_id: int,
     db: Session = Depends(get_db),
 ):
-    book = (
-        db.query(Book)
-        .filter(Book.id == book_id)
-        .first()
-    )
+    book = db.query(Book).filter(Book.id == book_id).first()
 
     if not book:
         raise HTTPException(
@@ -145,11 +138,7 @@ def get_book(
     book_id: int,
     db: Session = Depends(get_db),
 ):
-    book = (
-        db.query(Book)
-        .filter(Book.id == book_id)
-        .first()
-    )
+    book = db.query(Book).filter(Book.id == book_id).first()
 
     if not book:
         raise HTTPException(

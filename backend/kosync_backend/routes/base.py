@@ -8,6 +8,7 @@ router = APIRouter(prefix="")
 
 templates = Jinja2Templates(directory=Path(__file__).parent.parent / "templates")
 
+
 @router.get("/")
 def index():
     return RedirectResponse("/books")
