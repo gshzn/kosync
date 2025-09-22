@@ -25,9 +25,9 @@ SynchroniseResponse = RootModel[list[BookToSynchronise]]
 
 @router.post("/sync", response_model=SynchroniseResponse)
 async def synchronise(
-    request: SynchroniseRequest,
+    request: SynchroniseRequest = SynchroniseRequest([]),
     db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings)
+    settings: Settings = Depends(get_settings),
 ) -> SynchroniseResponse:
     """Given the list of ebooks on the client, determine which new books should be downloaded."""
     available_books = db.query(Book).all()
@@ -42,8 +42,7 @@ async def synchronise(
     return SynchroniseResponse(
         [
             BookToSynchronise(
-                id=book.id,
-                url=f"{settings.base_url.rstrip("/")}/api/v1/book/{book.id}"
+                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/book/{book.id}"
             )
             for book in missing_books
         ]
@@ -54,7 +53,7 @@ async def synchronise(
 async def download(
     book_id: UUID4,
     db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings)
+    settings: Settings = Depends(get_settings),
 ) -> Response:
     book = db.query(Book).filter(Book.id == book_id).first()
 

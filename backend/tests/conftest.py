@@ -66,7 +66,7 @@ def app_client(sql_path: Path, uploads_path: Path) -> Generator[TestClient]:
         {
             "DATABASE_URL": f"sqlite:///{sql_path}",
             "UPLOAD_DIR": str(uploads_path),
-            "BASE_URL": "http://kosync.test/"
+            "BASE_URL": "http://kosync.test/",
         }
     ):
         with TestClient(get_app(), raise_server_exceptions=True) as client:

@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/godbus/dbus/v5"
 )
@@ -69,4 +71,22 @@ func ShowDialog(title string, body string, acceptBtnText string) error {
 	}
 
 	return errors.New("unable to handle dialog confirm click")
+}
+
+func TriggerReload() {
+	conn, err := dbus.ConnectSystemBus()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to connect to session bus:", err)
+		os.Exit(1)
+	}
+
+	defer conn.Close()
+
+	obj := conn.Object("com.github.shermp.nickeldbus", "/nickeldbus")
+	obj.Call("com.github.shermp.nickeldbus.pfmRescanBooks", 0)
+
+	if err != nil {
+		panic(err)
+	}
+
 }

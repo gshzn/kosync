@@ -19,7 +19,7 @@ def compile() -> Path:
 
 def move_file_with_ftp(file: Path) -> None:
     ftp = ftplib.FTP()
-    ftp.connect("192.168.50.184", 1021)
+    ftp.connect("10.0.0.7", 1021)
     ftp.login("admin", "admin")
 
     ftp.delete(file.name)
