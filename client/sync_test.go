@@ -26,7 +26,7 @@ func TestSynchroniseGatherFiles(t *testing.T) {
 	}
 
 	// Test GatherLocalFiles
-	files, err := GatherLocalFiles(tempDir)
+	files, err := GatherSyncedBooks(tempDir)
 	if err != nil {
 		t.Fatalf("GatherLocalFiles failed: %v", err)
 	}

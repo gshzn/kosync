@@ -6,15 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type BookToDownload struct {
 	Id, Url string
 }
 
-func GatherLocalFiles(directory string) ([]string, error) {
+func GatherSyncedBooks(directory string) ([]string, error) {
 	entries, err := os.ReadDir(directory)
 	if err != nil {
 		return nil, err
@@ -23,13 +25,13 @@ func GatherLocalFiles(directory string) ([]string, error) {
 	var fileNames []string
 
 	for _, file := range entries {
-		fileNames = append(fileNames, file.Name())
+		fileNames = append(fileNames, strings.TrimRight(file.Name(), ".epub"))
 	}
 	return fileNames, nil
 }
 
 func Synchronise(httpClient http.Client, directory string) error {
-	localFiles, err := GatherLocalFiles(directory)
+	localFiles, err := GatherSyncedBooks(directory)
 	if err != nil {
 		return err
 	}
@@ -77,6 +79,8 @@ func DownloadFile(httpClient *http.Client, book BookToDownload, pathOnDisk strin
 	}
 	defer outputFile.Close()
 
+	log.Printf("Getting file at %s", book.Url)
+
 	resp, err := httpClient.Get(book.Url)
 	if err != nil {
 		return err
@@ -85,7 +89,7 @@ func DownloadFile(httpClient *http.Client, book BookToDownload, pathOnDisk strin
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("invalid response from server: %d", resp.StatusCode))
+		return fmt.Errorf("invalid response from server: %d", resp.StatusCode)
 	}
 
 	io.Copy(outputFile, resp.Body)
