@@ -23,7 +23,7 @@ Base = declarative_base()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False)
 
 
-def initialise_db(settings: Settings) -> Generator[None]:
+def initialise_db(settings: Settings) -> None:
     Base.metadata.create_all(bind=get_engine(settings))
 
 

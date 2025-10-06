@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, RootModel, UUID4
 from sqlalchemy.orm import Session
 
-from backend.kosync_backend.database import Book, get_db
+from kosync_backend.database import Book, get_db
 from kosync_backend.config import Settings
 from kosync_backend.config import get_settings
 
