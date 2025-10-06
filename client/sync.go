@@ -30,46 +30,48 @@ func GatherSyncedBooks(directory string) ([]string, error) {
 	return fileNames, nil
 }
 
-func Synchronise(httpClient http.Client, directory string) error {
+// Synchronises the local state with what's on the server.
+// Returns the amount of books synced, or an error.
+func Synchronise(httpClient http.Client, directory string) (int, error) {
 	localFiles, err := GatherSyncedBooks(directory)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	jsonBody, err := json.Marshal(localFiles)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	request, err := http.NewRequest("POST", "http://192.168.50.215:8000/api/v1/sync", bytes.NewReader(jsonBody))
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		return errors.New("error reading response body")
+		return -1, errors.New("error reading response body")
 	}
 
 	if response.StatusCode != 200 {
-		return fmt.Errorf("received non-success statuscode %d from server with error %s", response.StatusCode, responseBody)
+		return -1, fmt.Errorf("received non-success statuscode %d from server with error %s", response.StatusCode, responseBody)
 	}
 
 	var booksToDownload []BookToDownload
 	if err = json.Unmarshal(responseBody, &booksToDownload); err != nil {
-		return err
+		return -1, err
 	}
 
 	for _, book := range booksToDownload {
 		DownloadFile(&httpClient, book, fmt.Sprintf("%s/%s.epub", directory, book.Id))
 	}
 
-	return nil
+	return len(booksToDownload), nil
 }
 
 func DownloadFile(httpClient *http.Client, book BookToDownload, pathOnDisk string) error {

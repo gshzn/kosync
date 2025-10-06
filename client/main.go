@@ -44,19 +44,29 @@ func main() {
 	}
 
 	log.Println("Starting synchronisation...")
-	err = Synchronise(httpClient, currentDirectory)
+	booksSynced, err := Synchronise(httpClient, currentDirectory)
 
 	if err != nil {
 		panic(err)
 	}
 
 	if !notRunningOnKobo {
-		err = ShowDialog("Complete!", "We synchronised 1 new book. Press OK to reload.", "OK")
-		if err != nil {
-			panic(err)
-		}
-		TriggerReload()
-	}
+		if booksSynced > 0 {
+			err = ShowDialog(
+				"Complete!",
+				fmt.Sprintf("We synchronised %d new book. Press OK to reload.", booksSynced),
+				"OK",
+			)
 
-	log.Println("Triggered reload")
+			if err != nil {
+				panic(err)
+			}
+
+			TriggerReload()
+
+			log.Println("Triggered reload")
+		} else {
+			ShowDialog("Complete!", "Nothing new found to synchronise.", "OK")
+		}
+	}
 }
