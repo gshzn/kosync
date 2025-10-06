@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -18,10 +19,12 @@ func main() {
 		return
 	}
 
-	var runningOnKobo bool
-	flag.BoolVar(&runningOnKobo, "non-kobo", false, "Run without connecting to DBus")
+	var notRunningOnKobo bool
+	flag.BoolVar(&notRunningOnKobo, "non-kobo", false, "Run without connecting to DBus")
 
-	if runningOnKobo {
+	flag.Parse()
+
+	if !notRunningOnKobo {
 		err := ShowDialog("Starting synchronisation", "This might take a while, please press OK to confirm.", "OK")
 		if err != nil {
 			panic(err)
@@ -36,14 +39,18 @@ func main() {
 	currentDirectory := fmt.Sprintf("%s/books", filepath.Dir(currentExecutable))
 	os.MkdirAll(currentDirectory, 0744)
 
-	log.Println("Downloading file...")
-	err = Synchronise(*http.DefaultClient, currentDirectory)
+	var httpClient = http.Client{
+		Timeout: time.Duration(15) * time.Second,
+	}
+
+	log.Println("Starting synchronisation...")
+	err = Synchronise(httpClient, currentDirectory)
 
 	if err != nil {
 		panic(err)
 	}
 
-	if runningOnKobo {
+	if !notRunningOnKobo {
 		err = ShowDialog("Complete!", "We synchronised 1 new book. Press OK to reload.", "OK")
 		if err != nil {
 			panic(err)
