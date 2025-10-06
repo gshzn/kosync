@@ -47,7 +47,12 @@ func main() {
 	booksSynced, err := Synchronise(httpClient, currentDirectory)
 
 	if err != nil {
-		panic(err)
+		ShowDialog(
+			"Oops",
+			fmt.Sprintf("An error occured while trying to synchronise: %s", err),
+			"OK",
+		)
+		return
 	}
 
 	if !notRunningOnKobo {
