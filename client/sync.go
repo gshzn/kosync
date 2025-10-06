@@ -39,7 +39,7 @@ func Synchronise(httpClient http.Client, directory string) error {
 		return err
 	}
 
-	request, err := http.NewRequest("POST", "http://127.0.0.1:8000/api/v1/sync", bytes.NewReader(jsonBody))
+	request, err := http.NewRequest("POST", "http://192.168.50.215:8000/api/v1/sync", bytes.NewReader(jsonBody))
 	if err != nil {
 		return err
 	}
