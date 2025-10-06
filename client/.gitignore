@@ -1,2 +1,3 @@
 dist/
-*.epub
+**/*.epub
+test_fixtures/
