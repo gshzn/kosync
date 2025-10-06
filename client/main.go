@@ -10,6 +10,14 @@ import (
 	"time"
 )
 
+func ShowError(err error) error {
+	return ShowDialog(
+		"Oops",
+		fmt.Sprintf("An error occured while trying to synchronise: %s", err),
+		"OK",
+	)
+}
+
 func main() {
 	log.Println("Starting")
 
@@ -27,7 +35,8 @@ func main() {
 	if !notRunningOnKobo {
 		err := ShowDialog("Starting synchronisation", "This might take a while, please press OK to confirm.", "OK")
 		if err != nil {
-			panic(err)
+			ShowError(err)
+			return
 		}
 	}
 
@@ -47,11 +56,7 @@ func main() {
 	booksSynced, err := Synchronise(httpClient, currentDirectory)
 
 	if err != nil {
-		ShowDialog(
-			"Oops",
-			fmt.Sprintf("An error occured while trying to synchronise: %s", err),
-			"OK",
-		)
+		ShowError(err)
 		return
 	}
 
@@ -64,7 +69,8 @@ func main() {
 			)
 
 			if err != nil {
-				panic(err)
+				ShowError(err)
+				return
 			}
 
 			TriggerReload()
