@@ -7,8 +7,9 @@ def compile() -> Path:
     env = os.environ.copy()
     env.update({"GOOS": "linux", "GOARCH": "arm"})
     return_code = subprocess.call(
-        args=["/usr/local/go/bin/go", "build", "-o", "dist/kosync_client"], 
+        args=["/opt/homebrew/bin/go", "build", "-o", "dist/kosync_client"], 
         env=env,
+        cwd=str(Path(__file__).parent)
     )
 
     if return_code != 0:
@@ -19,7 +20,7 @@ def compile() -> Path:
 
 def move_file_with_ftp(file: Path) -> None:
     ftp = ftplib.FTP()
-    ftp.connect("10.0.0.7", 1021)
+    ftp.connect("192.168.50.184", 1021)
     ftp.login("admin", "admin")
 
     ftp.delete(file.name)
