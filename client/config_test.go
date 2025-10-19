@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Test to parse config file
 func TestReadConfigFile(t *testing.T) {
 	tmpDir := "/tmp/kosyncTests/"
 
@@ -24,5 +23,3 @@ func TestReadConfigFile(t *testing.T) {
 		BooksDirectory: "/mnt/onboard/kosync",
 	}, result)
 }
-
-// Test to handle error reading file

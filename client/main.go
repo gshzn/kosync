@@ -10,12 +10,14 @@ import (
 	"time"
 )
 
-func ShowError(err error) error {
-	return ShowDialog(
+func ShowErrorAndExit(err error) {
+	ShowDialog(
 		"Oops",
 		fmt.Sprintf("An error occured while trying to synchronise: %s", err),
 		"OK",
 	)
+
+	os.Exit(1)
 }
 
 func main() {
@@ -34,14 +36,13 @@ func main() {
 
 	currentExecutable, err := os.Executable()
 	if err != nil {
-		ShowError(err)
-		return
+		ShowErrorAndExit(err)
 	}
 
 	config, err := LoadConfig(filepath.Dir(currentExecutable))
 	if err != nil {
 		if !notRunningOnKobo {
-			ShowError(err)
+			ShowErrorAndExit(err)
 		} else {
 			panic(err)
 		}
@@ -50,36 +51,44 @@ func main() {
 	if !notRunningOnKobo {
 		err := ShowDialog("Starting synchronisation", "This might take a while, please press OK to confirm.", "OK")
 		if err != nil {
-			ShowError(err)
-			return
+			ShowErrorAndExit(err)
 		}
 	}
 
-	os.MkdirAll(config.BooksDirectory, 0744)
+	err = os.MkdirAll(config.BooksDirectory, 0744)
+	if err != nil {
+		if !notRunningOnKobo {
+			ShowErrorAndExit(err)
+		} else {
+			panic(err)
+		}
+	}
 
 	var httpClient = http.Client{
 		Timeout: time.Duration(15) * time.Second,
 	}
 
 	log.Println("Starting synchronisation...")
-	booksSynced, err := Synchronise(httpClient, config.BooksDirectory)
+	booksSynced, err := Synchronise(httpClient, config)
 
 	if err != nil {
-		ShowError(err)
-		return
+		if !notRunningOnKobo {
+			ShowErrorAndExit(err)
+		} else {
+			panic(err)
+		}
 	}
 
 	if !notRunningOnKobo {
 		if booksSynced > 0 {
 			err = ShowDialog(
 				"Complete!",
-				fmt.Sprintf("We synchronised %d new book. Press OK to reload.", booksSynced),
+				fmt.Sprintf("We synchronised %d new book(s). Press OK to reload.", booksSynced),
 				"OK",
 			)
 
 			if err != nil {
-				ShowError(err)
-				return
+				ShowErrorAndExit(err)
 			}
 
 			TriggerReload()
