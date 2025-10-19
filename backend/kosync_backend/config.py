@@ -3,16 +3,15 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Database
     database_url: str = "sqlite:///./kosync.db"
 
-    # File uploads
     upload_dir: str = "./uploads"
 
     base_url: str = "http://localhost:8000"
 
-    # CORS
     allowed_origins: list[str] = ["http://localhost"]
+
+    client_path: str = "./kosync_client"
 
 
 @functools.cache
