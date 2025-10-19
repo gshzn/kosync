@@ -2,3 +2,5 @@
 .python-version
 access_log.jsonl
 .venv/
+uploads/
+kosync.db

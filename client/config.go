@@ -34,13 +34,13 @@ func LoadConfig(rootDir string) (*Config, error) {
 
 	configString, err := os.ReadFile(configPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open the configuration file: %s", err)
 	}
 
 	var config Config
 	err = json.Unmarshal(configString, &config)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read the config file: %s", err)
 	}
 
 	return &config, nil

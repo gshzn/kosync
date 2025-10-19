@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type BookToDownload struct {
@@ -25,15 +27,17 @@ func GatherSyncedBooks(directory string) ([]string, error) {
 	var fileNames []string
 
 	for _, file := range entries {
-		fileNames = append(fileNames, strings.TrimRight(file.Name(), ".epub"))
+		if fileName, err := uuid.Parse(file.Name()); err == nil {
+			fileNames = append(fileNames, strings.TrimRight(fileName.String(), ".epub"))
+		}
 	}
 	return fileNames, nil
 }
 
 // Synchronises the local state with what's on the server.
 // Returns the amount of books synced, or an error.
-func Synchronise(httpClient http.Client, directory string) (int, error) {
-	localFiles, err := GatherSyncedBooks(directory)
+func Synchronise(httpClient http.Client, config *Config) (int, error) {
+	localFiles, err := GatherSyncedBooks(config.BooksDirectory)
 	if err != nil {
 		return -1, err
 	}
@@ -43,10 +47,16 @@ func Synchronise(httpClient http.Client, directory string) (int, error) {
 		return -1, err
 	}
 
-	request, err := http.NewRequest("POST", "http://192.168.50.215:8000/api/v1/sync", bytes.NewReader(jsonBody))
+	request, err := http.NewRequest(
+		"POST",
+		fmt.Sprintf("%s/api/v1/sync", strings.TrimRight(config.Endpoint, "/")),
+		bytes.NewReader(jsonBody),
+	)
 	if err != nil {
 		return -1, err
 	}
+
+	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.Token))
 
 	response, err := httpClient.Do(request)
 	if err != nil {
@@ -68,7 +78,7 @@ func Synchronise(httpClient http.Client, directory string) (int, error) {
 	}
 
 	for _, book := range booksToDownload {
-		DownloadFile(&httpClient, book, fmt.Sprintf("%s/%s.epub", directory, book.Id))
+		DownloadFile(&httpClient, book, fmt.Sprintf("%s/%s.epub", config.BooksDirectory, book.Id))
 	}
 
 	return len(booksToDownload), nil

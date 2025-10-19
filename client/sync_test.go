@@ -58,7 +58,9 @@ func TestDownloadNewFiles(t *testing.T) {
 
 	tempDir := t.TempDir()
 
-	Synchronise(*http.DefaultClient, tempDir)
+	Synchronise(*http.DefaultClient, &Config{
+		BooksDirectory: tempDir,
+	})
 
 	assert.Equal(t, 2, httpmock.GetTotalCallCount())
 
@@ -99,7 +101,9 @@ func TestSynchroniseNothingNew(t *testing.T) {
 	tempDir := t.TempDir()
 	copyFile(TEST_BOOK, fmt.Sprintf("%s/%s", tempDir, strings.Split(TEST_BOOK, "/")[1]))
 
-	Synchronise(*http.DefaultClient, tempDir)
+	Synchronise(*http.DefaultClient, &Config{
+		BooksDirectory: tempDir,
+	})
 
 	assert.Equal(t, 1, httpmock.GetTotalCallCount())
 
