@@ -32,6 +32,21 @@ func main() {
 
 	flag.Parse()
 
+	currentExecutable, err := os.Executable()
+	if err != nil {
+		ShowError(err)
+		return
+	}
+
+	config, err := LoadConfig(filepath.Dir(currentExecutable))
+	if err != nil {
+		if !notRunningOnKobo {
+			ShowError(err)
+		} else {
+			panic(err)
+		}
+	}
+
 	if !notRunningOnKobo {
 		err := ShowDialog("Starting synchronisation", "This might take a while, please press OK to confirm.", "OK")
 		if err != nil {
@@ -40,20 +55,14 @@ func main() {
 		}
 	}
 
-	currentExecutable, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-
-	currentDirectory := fmt.Sprintf("%s/books", filepath.Dir(currentExecutable))
-	os.MkdirAll(currentDirectory, 0744)
+	os.MkdirAll(config.BooksDirectory, 0744)
 
 	var httpClient = http.Client{
 		Timeout: time.Duration(15) * time.Second,
 	}
 
 	log.Println("Starting synchronisation...")
-	booksSynced, err := Synchronise(httpClient, currentDirectory)
+	booksSynced, err := Synchronise(httpClient, config.BooksDirectory)
 
 	if err != nil {
 		ShowError(err)
