@@ -6,6 +6,8 @@ from typing import Self
 from urllib.request import urlretrieve
 from pathlib import Path
 
+from fastapi import Request
+
 from kosync_backend.config import Settings
 
 
@@ -82,8 +84,8 @@ class ClientGenerator:
             )
         )
 
-        path = Path(self.root_directory) / "generated" / f"{token}.tgz"
-        path.parent.mkdir(exist_ok=True)
+        path = Path(self.root_directory) / "generated" / token / "KoboRoot.tgz"
+        path.parent.mkdir(exist_ok=True, parents=True)
 
         with tarfile.open(path, mode="w:gz") as tar_file:
             for subdir in ["usr", "mnt"]:
@@ -95,3 +97,12 @@ class ClientGenerator:
         config_path.unlink()
 
         return path
+
+
+def get_client_generator(request: Request) -> ClientGenerator:
+    if hasattr(request.app.state, "client_generator"):
+        return request.app.state.client_generator
+
+    raise ValueError(
+        "client_generator was not found on the app, did the lifecycle event fire?"
+    )

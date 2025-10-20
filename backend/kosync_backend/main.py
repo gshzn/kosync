@@ -3,15 +3,18 @@ import contextlib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from kosync_backend.routes import base, books, sync
+from kosync_backend.client_generator import ClientGenerator
+from kosync_backend.routes import base, books, sync, download
 from kosync_backend.database import initialise_db
 from kosync_backend.config import get_settings
 
 
 @contextlib.asynccontextmanager
-async def lifespan(_app: FastAPI) -> AsyncGenerator[None]:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     initialise_db(get_settings())
-    yield
+    with ClientGenerator(get_settings()) as client_generator:
+        app.state.client_generator = client_generator
+        yield
 
 
 def get_app() -> FastAPI:
@@ -33,5 +36,6 @@ def get_app() -> FastAPI:
     app.include_router(books.router)
     app.include_router(base.router)
     app.include_router(sync.router)
+    app.include_router(download.router)
 
     return app
