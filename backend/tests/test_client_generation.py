@@ -68,7 +68,7 @@ def test_client_generation_generates_a_client_archive(
                 client_path.parent / "mnt" / "onboard" / ".adds" / "nm" / "doc"
             ).read_text()
         )
-        assert f'"Token": "foo"' in (
+        assert f'"Token": "{token}"' in (
             (
                 client_path.parent / "mnt" / "onboard" / "kosync" / ".kosyncConfig.json"
             ).read_text()
