@@ -1,37 +1,44 @@
 import os
 from pathlib import Path
-from uuid import uuid4
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Request
-from sqlalchemy.orm import Session
+from uuid import UUID, uuid4
 
-from kosync_backend.database import get_db, Book
-from kosync_backend.schemas import Book as BookSchema, BookWithCover
-from kosync_backend.epub import (
-    extract_epub_metadata,
-    extract_epub_cover,
-    image_to_base64,
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Request,
+    UploadFile,
+    status,
 )
+from sqlalchemy.orm import Session
+from starlette.responses import Response
+from starlette.status import HTTP_204_NO_CONTENT
+
 from kosync_backend.config import get_settings
-from kosync_backend.routes.base import templates
+from kosync_backend.database import Book, get_db
+from kosync_backend.epub import (
+    extract_epub_cover,
+    extract_epub_metadata,
+)
+from kosync_backend.schemas import BookModel
+from kosync_backend.schemas import BookUpdateRequest
 
 router = APIRouter(prefix="/books", tags=["books"])
 
 
-@router.post("", response_model=BookSchema)
+@router.post("")
 async def upload_book(
     request: Request,
-    file: UploadFile = File(...),
+    file: UploadFile,
     db: Session = Depends(get_db),
-):
-    # Validate file type
-    if not file.filename.lower().endswith(".epub"):
+) -> BookModel:
+    if not file.filename or not file.filename.lower().endswith(".epub"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only EPUB files are allowed",
         )
 
     # Check file size
-    file_size = 0
     content = await file.read()
     file_size = len(content)
 
@@ -64,7 +71,7 @@ async def upload_book(
         db.add(db_book)
         db.commit()
 
-        return render_books_page(db, request)
+        return BookModel.from_orm(db_book)
     except Exception as e:
         # Clean up file if database operation fails
         if os.path.exists(file_path):
@@ -75,46 +82,21 @@ async def upload_book(
         )
 
 
-def render_books_page(db: Session, request: Request) -> "templates.TemplateResponse":
-    books = db.query(Book).all()
-
-    # Convert books with cover images to base64
-    books_with_covers = []
-    for book in books:
-        book_dict = {
-            "id": book.id,
-            "title": book.title,
-            "author": book.author,
-            "publisher": book.publisher,
-            "isbn": book.isbn,
-            "language": book.language,
-            "description": book.description,
-            "file_size": book.file_size,
-            "upload_date": book.upload_date,
-            "cover_image_base64": image_to_base64(book.cover_image)
-            if book.cover_image
-            else None,
-        }
-        books_with_covers.append(BookWithCover(**book_dict))
-
-    return templates.TemplateResponse(
-        request=request, name="index.html", context={"books": books_with_covers}
-    )
-
-
 @router.get("")
 def get_user_books(
     request: Request,
     db: Session = Depends(get_db),
-):
-    return render_books_page(db, request)
+) -> list[BookModel]:
+    books = db.query(Book).all()
+
+    return [BookModel.from_orm(book) for book in books]
 
 
 @router.delete("/{book_id}")
 def delete_book(
     book_id: int,
     db: Session = Depends(get_db),
-):
+) -> Response:
     book = db.query(Book).filter(Book.id == book_id).first()
 
     if not book:
@@ -130,35 +112,41 @@ def delete_book(
     db.delete(book)
     db.commit()
 
-    return {"message": "Book deleted successfully"}
+    return Response(status_code=HTTP_204_NO_CONTENT)
 
 
-@router.get("/{book_id}", response_model=BookWithCover)
+@router.get("/{book_id}", response_model=BookModel)
 def get_book(
-    book_id: int,
+    book_id: str,
     db: Session = Depends(get_db),
-):
-    book = db.query(Book).filter(Book.id == book_id).first()
+) -> BookModel:
+    book = db.query(Book).filter(Book.id == UUID(book_id)).first()
 
     if not book:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
         )
 
-    book_dict = {
-        "id": book.id,
-        "title": book.title,
-        "author": book.author,
-        "publisher": book.publisher,
-        "isbn": book.isbn,
-        "language": book.language,
-        "description": book.description,
-        "file_size": book.file_size,
-        "upload_date": book.upload_date,
-        "owner_id": book.owner_id,
-        "cover_image_base64": image_to_base64(book.cover_image)
-        if book.cover_image
-        else None,
-    }
+    return BookModel.from_orm(book)
 
-    return BookWithCover(**book_dict)
+
+@router.patch("/{book_id}", response_model=BookModel)
+def update_book(
+    book_id: str,
+    request: BookUpdateRequest,
+    db: Session = Depends(get_db),
+) -> BookModel:
+    book = db.query(Book).where(Book.id == UUID(book_id)).first()
+
+    if book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+
+    book.title = request.title
+    book.author = request.author
+    book.description = request.description
+
+    db.commit()
+
+    return BookModel.from_orm(book)

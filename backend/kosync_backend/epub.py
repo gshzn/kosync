@@ -1,13 +1,23 @@
 import os
 import base64
+from pathlib import Path
 from typing import Optional
 import ebooklib
 from ebooklib import epub
+from pydantic import BaseModel
 
-from kosync_backend.schemas import BookCreate
 
 
-def extract_epub_metadata(file_path: str) -> BookCreate:
+class BookMetadata(BaseModel):
+    title: str
+    author: Optional[str] = None
+    publisher: Optional[str] = None
+    isbn: Optional[str] = None
+    language: Optional[str] = None
+    description: Optional[str] = None
+
+
+def extract_epub_metadata(file_path: Path) -> BookMetadata:
     """Extract metadata from EPUB file"""
     try:
         book = epub.read_epub(file_path)
@@ -28,7 +38,7 @@ def extract_epub_metadata(file_path: str) -> BookCreate:
         description = description[0][0] if description else None
         isbn = identifier[0][0] if identifier else None
 
-        return BookCreate(
+        return BookMetadata(
             title=title,
             author=author,
             publisher=publisher,
@@ -40,10 +50,12 @@ def extract_epub_metadata(file_path: str) -> BookCreate:
         print(f"Error extracting metadata: {e}")
         # Return basic metadata with filename as title
         filename = os.path.basename(file_path)
-        return BookCreate(title=filename.replace(".epub", ""), author="Unknown Author")
+        return BookMetadata(
+            title=filename.replace(".epub", ""), author="Unknown Author"
+        )
 
 
-def extract_epub_cover(file_path: str) -> Optional[bytes]:
+def extract_epub_cover(file_path: Path) -> Optional[bytes]:
     """Extract cover image from EPUB file"""
     try:
         book = epub.read_epub(file_path)
