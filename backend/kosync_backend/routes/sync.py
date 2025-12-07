@@ -32,12 +32,14 @@ async def synchronise(
     """Given the list of ebooks on the client, determine which new books should be downloaded."""
     available_books = db.query(Book).all()
 
-    missing_books = set(b.id for b in available_books) - set(request.root)
+    missing_books = set(str(b.id) for b in available_books) - set(
+        str(b) for b in request.root
+    )
 
     if len(missing_books) == 0:
         return SynchroniseResponse([])
 
-    missing_books = [b for b in available_books if b.id in missing_books]
+    missing_books = [b for b in available_books if str(b.id) in missing_books]
 
     return SynchroniseResponse(
         [
