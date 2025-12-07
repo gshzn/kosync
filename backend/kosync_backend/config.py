@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     base_url: str = "http://localhost:8000"
 
-    allowed_origins: list[str] = ["http://localhost"]
+    allowed_origins: list[str] = ["http://localhost:5173"]
 
     client_path: str = "./kosync_client"
 

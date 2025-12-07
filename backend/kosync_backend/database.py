@@ -1,26 +1,35 @@
+from collections.abc import Generator
+from datetime import datetime
 from typing import Annotated
+
 from fastapi import Depends
 from sqlalchemy import (
     UUID,
-    Engine,
-    create_engine,
-    Column,
-    Integer,
-    String,
     DateTime,
-    Text,
+    Engine,
+    Integer,
     LargeBinary,
+    String,
+    Text,
+    create_engine,
 )
-from sqlalchemy.orm import sessionmaker, Session, declarative_base
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    Session,
+    mapped_column,
+    sessionmaker,
+)
 from sqlalchemy.sql import func
-from collections.abc import Generator
 
 from kosync_backend.config import Settings, get_settings
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Base class for all ORM models."""
 
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False)
+SessionLocal = sessionmaker(autoflush=False)
 
 
 def initialise_db(settings: Settings) -> None:
@@ -44,14 +53,16 @@ def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Se
 class Book(Base):
     __tablename__ = "books"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    author = Column(String)
-    publisher = Column(String)
-    isbn = Column(String)
-    language = Column(String)
-    description = Column(Text)
-    cover_image = Column(LargeBinary)  # Store cover image as binary data
-    file_path = Column(String, nullable=False)  # Path to the EPUB file
-    file_size = Column(Integer)
-    upload_date = Column(DateTime(timezone=True), server_default=func.now())
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    author: Mapped[str | None] = mapped_column(String, nullable=True)
+    publisher: Mapped[str | None] = mapped_column(String, nullable=True)
+    isbn: Mapped[str | None] = mapped_column(String, nullable=True)
+    language: Mapped[str | None] = mapped_column(String, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cover_image: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    file_path: Mapped[str] = mapped_column(String, nullable=False)
+    file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    upload_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
