@@ -87,7 +87,7 @@ export function DashboardPage() {
                   : null;
 
                 return (
-                  <BookDetailsDialog key={book.id} book={book}>
+                  <BookDetailsDialog key={book.id} book={book} onDelete={refresh}>
                     <div
                       className="flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm h-full text-left"
                     >
