@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 
 from kosync_backend.client_generator import ClientGenerator, get_client_generator
 
-router = APIRouter(prefix="/download")
+router = APIRouter(prefix="/api/v1/download")
 
 
 @router.get("")

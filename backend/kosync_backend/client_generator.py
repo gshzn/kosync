@@ -17,30 +17,38 @@ class ClientGenerator:
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
+        self.root_directory = Path(TemporaryDirectory(delete=False).name)
 
     def __enter__(self) -> Self:
-        self.root_directory = self._prepare_nickeldbus()
+        self._prepare_nickel_addons()
         self._prepare_client()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
         shutil.rmtree(self.root_directory)
 
-    def _download_latest_nickelmenu_version(self) -> Path:
+    def _download_nickeldbus(self) -> Path:
+        path, _ = urlretrieve(
+            "https://github.com/shermp/NickelDBus/releases/download/0.2.0/KoboRoot.tgz"
+        )
+
+        return Path(path)
+
+    def _download_nickelmenu(self) -> Path:
         path, _ = urlretrieve(
             "https://github.com/pgaskin/NickelMenu/releases/download/v0.5.4/KoboRoot.tgz"
         )
 
         return Path(path)
 
-    def _prepare_nickeldbus(self) -> Path:
-        tmp_dir = TemporaryDirectory(delete=False)
-
-        tar = tarfile.open(self._download_latest_nickelmenu_version(), "r:gz")
-        tar.extractall(path=tmp_dir.name, filter="tar")
+    def _prepare_nickel_addons(self) -> None:
+        tar = tarfile.open(self._download_nickelmenu(), "r:gz")
+        tar.extractall(path=self.root_directory, filter="tar")
         tar.close()
 
-        return Path(tmp_dir.name)
+        tar = tarfile.open(self._download_nickeldbus(), "r:gz")
+        tar.extractall(path=self.root_directory, filter="tar")
+        tar.close()
 
     def _nickelmenu_config(self) -> str:
         return (
@@ -88,7 +96,7 @@ class ClientGenerator:
         path.parent.mkdir(exist_ok=True, parents=True)
 
         with tarfile.open(path, mode="w:gz") as tar_file:
-            for subdir in ["usr", "mnt"]:
+            for subdir in ["usr", "mnt", "etc"]:
                 tar_file.add(
                     name=Path(self.root_directory) / subdir,
                     arcname=subdir,
