@@ -15,7 +15,6 @@ pnpm install # or npm install / yarn install
 ```bash
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_API_BASE_URL=http://192.168.50.215
 ```
 
 3. Start the dev server:

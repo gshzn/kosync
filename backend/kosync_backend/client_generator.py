@@ -87,7 +87,7 @@ class ClientGenerator:
                 {
                     "Token": token,
                     "BooksDirectory": "/mnt/onboard/kosync/",
-                    "Endpoint": "https://books.guus.tech/",
+                    "Endpoint": self._settings.base_url,
                 }
             )
         )

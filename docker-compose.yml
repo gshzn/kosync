@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./kosync.db:/app/kosync.db
+      - ./uploads:/app/uploads
+    environment:
+      - DATABASE_URL=sqlite:///./kosync.db
+      - UPLOAD_DIR=./uploads
+      # Base URL for the client generator to embed in config files
+      - BASE_URL=http://localhost:8080/api
+      - ALLOWED_ORIGINS=["http://localhost:8080"]
+      - CLIENT_PATH=./kosync_client
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_SUPABASE_URL=https://fuifiewuljtsqjcqptfy.supabase.co
+        - VITE_SUPABASE_ANON_KEY=sb_publishable_vJkTtN6qPMeY4LfhMoSc8w_c7DMXItr
+        - VITE_API_BASE_URL=http://backend:8000/api/v1
+    ports:
+      - "8080:80"
+    volumes:
+      - ./infra/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
