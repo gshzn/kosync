@@ -1,8 +1,12 @@
-import { BookMarked, Pencil } from "lucide-react";
+import { BookMarked, Pencil, Trash2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import type { Book } from "../types/books";
 import { Button } from "./ui/button";
+import { useAuth } from "../contexts/AuthContext";
+import { API_BASE_URL } from "../lib/config";
 import {
   Dialog,
   DialogClose,
@@ -17,17 +21,55 @@ import {
 interface BookDetailsDialogProps {
   book: Book;
   children: React.ReactNode;
+  onDelete?: () => void;
 }
 
-export function BookDetailsDialog({ book, children }: BookDetailsDialogProps) {
+export function BookDetailsDialog({ book, children, onDelete }: BookDetailsDialogProps) {
   const navigate = useNavigate();
+  const { session } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this book? This action cannot be undone.")) {
+      return;
+    }
+
+    if (!session?.access_token) {
+      toast.error("You must be logged in to delete books");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/books/${book.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete book");
+      }
+
+      toast.success("Book deleted successfully");
+      setIsOpen(false);
+      onDelete?.();
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      toast.error("Failed to delete book");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const coverSrc = book.cover_image_base64
     ? `data:image/jpeg;base64,${book.cover_image_base64}`
     : null;
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild className="cursor-pointer transition-opacity hover:opacity-80">
         {children}
       </DialogTrigger>
@@ -81,13 +123,29 @@ export function BookDetailsDialog({ book, children }: BookDetailsDialogProps) {
         </div>
 
         <DialogFooter className="sm:justify-between gap-2">
-            <DialogClose asChild>
-                <Button variant="secondary">Close</Button>
-            </DialogClose>
-            <Button onClick={() => navigate(`/book/${book.id}/edit`)}>
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit Details
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="destructive" 
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-2 h-4 w-4" />
+                )}
+                Delete
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <DialogClose asChild>
+                  <Button variant="secondary" disabled={isDeleting}>Close</Button>
+              </DialogClose>
+              <Button onClick={() => navigate(`/book/${book.id}/edit`)} disabled={isDeleting}>
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit Details
+              </Button>
+            </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

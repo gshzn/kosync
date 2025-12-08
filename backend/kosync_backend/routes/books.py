@@ -94,7 +94,7 @@ def get_user_books(
 
 @router.delete("/{book_id}")
 def delete_book(
-    book_id: int,
+    book_id: UUID,
     db: Session = Depends(get_db),
 ) -> Response:
     book = db.query(Book).filter(Book.id == book_id).first()
