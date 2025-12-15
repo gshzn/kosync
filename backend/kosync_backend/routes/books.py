@@ -11,9 +11,11 @@ from fastapi import (
     status,
 )
 from sqlalchemy.orm import Session
+from starlette.responses import FileResponse
 from starlette.responses import Response
 from starlette.status import HTTP_204_NO_CONTENT
 
+from kosync_backend.config import Settings
 from kosync_backend.config import get_settings
 from kosync_backend.database import Book, get_db
 from kosync_backend.epub import (
@@ -23,7 +25,7 @@ from kosync_backend.epub import (
 from kosync_backend.schemas import BookModel
 from kosync_backend.schemas import BookUpdateRequest
 
-router = APIRouter(prefix="/books", tags=["books"])
+router = APIRouter(prefix="/books")
 
 
 @router.post("")
@@ -150,3 +152,19 @@ def update_book(
     db.commit()
 
     return BookModel.from_orm(book)
+
+
+@router.get("/{book_id}/download")
+async def download(
+    book_id: UUID,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> Response:
+    book = db.query(Book).filter(Book.id == book_id).first()
+
+    if book is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    path = Path(settings.upload_dir) / book.file_path
+
+    return FileResponse(path)

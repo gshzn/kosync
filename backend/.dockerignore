@@ -1,0 +1,32 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.tox/
+.coverage
+.coverage.*
+.cache
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# Database
+kosync.db
+
+# Uploads
+uploads/
+
+# Tests (exclude from production build)
+tests/
+
+# Git
+.git
+.gitignore
+
+# OS
+.DS_Store
+

@@ -9,7 +9,7 @@ from kosync_backend.database import Book, get_db
 from kosync_backend.config import Settings
 from kosync_backend.config import get_settings
 
-router = APIRouter(prefix="/api/v1")
+router = APIRouter(prefix="/sync")
 
 
 SynchroniseRequest = RootModel[list[UUID4]]
@@ -23,7 +23,7 @@ class BookToSynchronise(BaseModel):
 SynchroniseResponse = RootModel[list[BookToSynchronise]]
 
 
-@router.post("/sync", response_model=SynchroniseResponse)
+@router.post("/", response_model=SynchroniseResponse)
 async def synchronise(
     request: SynchroniseRequest = SynchroniseRequest([]),
     db: Session = Depends(get_db),
@@ -44,7 +44,7 @@ async def synchronise(
     return SynchroniseResponse(
         [
             BookToSynchronise(
-                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/book/{book.id}"
+                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/books/{book.id}/download"
             )
             for book in missing_books
         ]
