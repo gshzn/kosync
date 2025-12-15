@@ -3,7 +3,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
 import { Skeleton } from "./components/ui/skeleton";
 import { LoginPage } from "./pages/LoginPage";
-import { DashboardPage } from "./pages/DashboardPage";
+import { BooksPage } from "./pages/BooksPage";
+import { DevicePage } from "./pages/DevicePage";
 import { EditBookPage } from "./pages/EditBookPage";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -36,14 +37,29 @@ export function App() {
       <Route
         path="/login"
         element={
-          user && !loading ? <Navigate to="/" replace /> : <LoginPage />
+          user && !loading ? <Navigate to="/devices" replace /> : <LoginPage />
         }
       />
       <Route
         path="/"
         element={
           <ProtectedRoute>
-            <DashboardPage />
+            <Navigate to="/devices" replace />
+          </ProtectedRoute>
+        } />
+      <Route
+        path="/books"
+        element={
+          <ProtectedRoute>
+            <BooksPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/devices"
+        element={
+          <ProtectedRoute>
+            <DevicePage />
           </ProtectedRoute>
         }
       />
@@ -55,7 +71,7 @@ export function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/devices" replace />} />
     </Routes>
   );
 }

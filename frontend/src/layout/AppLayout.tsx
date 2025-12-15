@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { LogOut, Menu, BookOpen } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 import { useAuth } from "../contexts/AuthContext";
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
@@ -12,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Button } from "../components/ui/button";
+import { cn } from "../lib/utils";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -19,6 +21,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const { user, signOut } = useAuth();
+  const location = useLocation();
 
   const initials =
     user?.email?.[0]?.toUpperCase() ??
@@ -29,18 +32,45 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="app-shell">
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="container flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-              <BookOpen className="h-5 w-5" />
+          <div className="flex h-full items-center gap-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold tracking-tight text-foreground">
+                  Kosync Reader
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Your EPUBs, synced and searchable
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold tracking-tight text-foreground">
-                Kosync Reader
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Your EPUBs, synced and searchable
-              </span>
-            </div>
+
+            <nav className="flex h-full items-center gap-6">
+              <Link
+                to="/devices"
+                className={cn(
+                  "flex h-full items-center border-b-2 px-1 text-sm font-medium transition-colors hover:text-foreground",
+                  location.pathname === "/devices"
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground"
+                )}
+              >
+                Device
+              </Link>
+              <Link
+                to="/books"
+                className={cn(
+                  "flex h-full items-center border-b-2 px-1 text-sm font-medium transition-colors hover:text-foreground",
+                  location.pathname === "/books"
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground"
+                )}
+              >
+                Books
+              </Link>
+            </nav>
           </div>
 
           <div className="flex items-center gap-4">
@@ -92,5 +122,3 @@ export function AppLayout({ children }: AppLayoutProps) {
     </div>
   );
 }
-
-

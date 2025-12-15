@@ -17,6 +17,7 @@ interface AuthContextValue {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -39,7 +40,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!isMounted) return;
 
       if (error) {
-        // eslint-disable-next-line no-console
         console.error("Error getting session", error);
       } else {
         setSession(data.session);
@@ -84,6 +84,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     toast.success("Check your email to confirm your account");
   }, []);
 
+  const signInWithGoogle = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) {
+      toast.error(error.message);
+      throw error;
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -98,6 +111,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loading,
     signIn,
     signUp,
+    signInWithGoogle,
     signOut,
   };
 

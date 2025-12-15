@@ -8,7 +8,7 @@ import { BookDetailsDialog } from "../components/BookDetailsDialog";
 import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
 
-export function DashboardPage() {
+export function BooksPage() {
   const { books, loading, error, refresh } = useBooks();
 
   const sortedBooks = useMemo(
