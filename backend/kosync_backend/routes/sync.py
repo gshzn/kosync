@@ -44,14 +44,14 @@ async def synchronise(
     return SynchroniseResponse(
         [
             BookToSynchronise(
-                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/books/{book.id}"
+                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/books/{book.id}/download"
             )
             for book in missing_books
         ]
     )
 
 
-@router.get("/book/{book_id}")
+@router.get("/books/{book_id}/download")
 async def download(
     book_id: UUID4,
     db: Session = Depends(get_db),
