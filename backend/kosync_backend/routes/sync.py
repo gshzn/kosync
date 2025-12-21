@@ -44,7 +44,7 @@ async def synchronise(
     return SynchroniseResponse(
         [
             BookToSynchronise(
-                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/books/{book.id}/download"
+                id=book.id, url=f"{settings.base_url.rstrip('/')}/api/v1/books/{book.id}"
             )
             for book in missing_books
         ]
