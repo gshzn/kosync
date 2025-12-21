@@ -76,7 +76,6 @@ class ClientGenerator:
             Path(self.root_directory)
             / "mnt"
             / "onboard"
-            / "kosync"
             / ".kosyncConfig.json"
         )
 
