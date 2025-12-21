@@ -49,7 +49,7 @@ func Synchronise(httpClient http.Client, config *Config) (int, error) {
 
 	request, err := http.NewRequest(
 		"POST",
-		fmt.Sprintf("%s/api/v1/sync", strings.TrimRight(config.Endpoint, "/")),
+		fmt.Sprintf("%s/api/v1/sync/", strings.TrimRight(config.Endpoint, "/")),
 		bytes.NewReader(jsonBody),
 	)
 	if err != nil {
