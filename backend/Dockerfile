@@ -26,5 +26,5 @@ RUN uv sync --frozen --no-dev
 EXPOSE 8000
 
 # Run the application
-CMD ["uv", "run", "uvicorn", "kosync_backend.main:get_app", "--host", "0.0.0.0", "--port", "8000", "--factory"]
+CMD ["uv", "run", "uvicorn", "kosync_backend.main:get_app", "--factory"]
 
