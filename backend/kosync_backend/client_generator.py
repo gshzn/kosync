@@ -73,10 +73,7 @@ class ClientGenerator:
 
     def generate(self, token: str) -> Path:
         config_path = (
-            Path(self.root_directory)
-            / "mnt"
-            / "onboard"
-            / ".kosyncConfig.json"
+            Path(self.root_directory) / "mnt" / "onboard" / ".kosyncConfig.json"
         )
 
         config_path.parent.mkdir(exist_ok=True)

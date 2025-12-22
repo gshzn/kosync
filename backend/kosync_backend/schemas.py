@@ -45,9 +45,9 @@ class BookModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     @classmethod
-    def from_orm(cls, orm_book: ORMBook) -> "BookModel":
+    def from_sqlalchemy_orm(cls, orm_book: ORMBook) -> "BookModel":  # type: ignore
         return cls(
-            id=orm_book.id,
+            id=orm_book.id,  # type: ignore
             title=orm_book.title,
             author=orm_book.author,
             publisher=orm_book.publisher,
@@ -55,7 +55,9 @@ class BookModel(BaseModel):
             language=orm_book.language,
             upload_date=orm_book.upload_date,
             description=orm_book.description,
-            cover_image_base64=base64.b64encode(orm_book.cover_image),
+            cover_image_base64=base64.b64encode(orm_book.cover_image).decode()
+            if orm_book.cover_image
+            else None,
         )
 
 

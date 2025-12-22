@@ -17,9 +17,7 @@ def mock_nickelmenu_download(mocker: MockerFixture) -> mock.Mock:
     kobo_root_path = Path(__file__).parent / "resources" / "nickelmenu_KoboRoot.tgz"
 
     return mocker.patch.object(
-        ClientGenerator,
-        "_download_nickelmenu",
-        return_value=kobo_root_path
+        ClientGenerator, "_download_nickelmenu", return_value=kobo_root_path
     )
 
 
@@ -28,9 +26,7 @@ def mock_nickeldbus_download(mocker: MockerFixture) -> mock.Mock:
     kobo_root_path = Path(__file__).parent / "resources" / "nickeldbus_KoboRoot.tgz"
 
     return mocker.patch.object(
-        ClientGenerator,
-        "_download_nickeldbus",
-        return_value=kobo_root_path
+        ClientGenerator, "_download_nickeldbus", return_value=kobo_root_path
     )
 
 
@@ -79,7 +75,9 @@ def test_client_generation_generates_a_client_archive(
         with tarfile.open(client_path, "r:gz") as client_archive:
             client_archive.extractall(path=client_path.parent, filter="tar")
 
-        assert (client_path.parent / "etc/dbus-1/system.d/com-github-shermp-nickeldbus.conf").exists()
+        assert (
+            client_path.parent / "etc/dbus-1/system.d/com-github-shermp-nickeldbus.conf"
+        ).exists()
         assert (client_path.parent / "mnt" / "onboard" / "kosync_client").exists()
         assert (
             "KoSync"
@@ -88,7 +86,5 @@ def test_client_generation_generates_a_client_archive(
             ).read_text()
         )
         assert f'"Token": "{token}"' in (
-            (
-                client_path.parent / "mnt" / "onboard" / "kosync" / ".kosyncConfig.json"
-            ).read_text()
+            (client_path.parent / "mnt" / "onboard" / ".kosyncConfig.json").read_text()
         )

@@ -54,6 +54,9 @@ class Book(Base):
     __tablename__ = "books"
 
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, index=True)
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), index=True, nullable=False
+    )
     title: Mapped[str] = mapped_column(String, nullable=False)
     author: Mapped[str | None] = mapped_column(String, nullable=True)
     publisher: Mapped[str | None] = mapped_column(String, nullable=True)

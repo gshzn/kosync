@@ -7,7 +7,6 @@ from ebooklib import epub
 from pydantic import BaseModel
 
 
-
 class BookMetadata(BaseModel):
     title: str
     author: Optional[str] = None

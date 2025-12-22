@@ -15,7 +15,7 @@ def test_upload_books(app_client: TestClient, uploads_path: Path) -> None:
     assert len(app_client.get("/api/v1/books").json()) == 1
 
 
-def test_update_book(app_client: TestClient, uploads_path: Path) -> None:
+def test_update_book(app_client: TestClient) -> None:
     dummy_book = (
         Path(__file__).parent / "resources" / "Around the World in 28 Languages.epub"
     )
@@ -24,11 +24,11 @@ def test_update_book(app_client: TestClient, uploads_path: Path) -> None:
     book_id = response.json()["id"]
 
     response = app_client.patch(
-        url=f"/books/{book_id}",
+        url=f"/api/v1/books/{book_id}",
         json={"title": "Foo", "description": "Bar", "author": "Baz"},
     )
 
     assert response.is_success
-    updated_book = app_client.get(f"books/{book_id}").json()
+    updated_book = app_client.get(f"/api/v1/books/{book_id}").json()
 
     assert updated_book["title"] == "Foo"

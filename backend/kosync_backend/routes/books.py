@@ -1,3 +1,4 @@
+from typing import Annotated
 import os
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -14,6 +15,7 @@ from sqlalchemy.orm import Session
 from starlette.responses import FileResponse
 from starlette.responses import Response
 from starlette.status import HTTP_204_NO_CONTENT
+from supabase_auth import User as SupabaseUser
 
 from kosync_backend.config import Settings
 from kosync_backend.config import get_settings
@@ -24,6 +26,7 @@ from kosync_backend.epub import (
 )
 from kosync_backend.schemas import BookModel
 from kosync_backend.schemas import BookUpdateRequest
+from kosync_backend.user_middleware import get_current_user_from_jwt
 
 router = APIRouter(prefix="/books")
 
@@ -32,7 +35,8 @@ router = APIRouter(prefix="/books")
 async def upload_book(
     request: Request,
     file: UploadFile,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[SupabaseUser, Depends(get_current_user_from_jwt)],
 ) -> BookModel:
     if not file.filename or not file.filename.lower().endswith(".epub"):
         raise HTTPException(
@@ -59,6 +63,7 @@ async def upload_book(
 
         db_book = Book(
             id=book_id,
+            user_id=UUID(user.id),
             title=book_metadata.title,
             author=book_metadata.author,
             publisher=book_metadata.publisher,
@@ -73,7 +78,7 @@ async def upload_book(
         db.add(db_book)
         db.commit()
 
-        return BookModel.from_orm(db_book)
+        return BookModel.from_sqlalchemy_orm(db_book)
     except Exception as e:
         # Clean up file if database operation fails
         if os.path.exists(file_path):
@@ -86,20 +91,23 @@ async def upload_book(
 
 @router.get("")
 def get_user_books(
-    request: Request,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[SupabaseUser, Depends(get_current_user_from_jwt)],
 ) -> list[BookModel]:
-    books = db.query(Book).all()
+    books = db.query(Book).filter(Book.user_id == UUID(user.id)).all()
 
-    return [BookModel.from_orm(book) for book in books]
+    return [BookModel.from_sqlalchemy_orm(book) for book in books]
 
 
 @router.delete("/{book_id}")
 def delete_book(
     book_id: UUID,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[SupabaseUser, Depends(get_current_user_from_jwt)],
 ) -> Response:
-    book = db.query(Book).filter(Book.id == book_id).first()
+    book = (
+        db.query(Book).filter(Book.id == book_id, Book.user_id == UUID(user.id)).first()
+    )
 
     if not book:
         raise HTTPException(
@@ -120,25 +128,35 @@ def delete_book(
 @router.get("/{book_id}", response_model=BookModel)
 def get_book(
     book_id: str,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[SupabaseUser, Depends(get_current_user_from_jwt)],
 ) -> BookModel:
-    book = db.query(Book).filter(Book.id == UUID(book_id)).first()
+    book = (
+        db.query(Book)
+        .filter(Book.id == UUID(book_id), Book.user_id == UUID(user.id))
+        .first()
+    )
 
     if not book:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
         )
 
-    return BookModel.from_orm(book)
+    return BookModel.from_sqlalchemy_orm(book)
 
 
 @router.patch("/{book_id}", response_model=BookModel)
 def update_book(
     book_id: str,
     request: BookUpdateRequest,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[SupabaseUser, Depends(get_current_user_from_jwt)],
 ) -> BookModel:
-    book = db.query(Book).where(Book.id == UUID(book_id)).first()
+    book = (
+        db.query(Book)
+        .where(Book.id == UUID(book_id), Book.user_id == UUID(user.id))
+        .first()
+    )
 
     if book is None:
         raise HTTPException(
@@ -151,16 +169,19 @@ def update_book(
 
     db.commit()
 
-    return BookModel.from_orm(book)
+    return BookModel.from_sqlalchemy_orm(book)
 
 
 @router.get("/{book_id}/download")
 async def download(
     book_id: UUID,
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
+    db: Annotated[Session, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    user: Annotated[SupabaseUser, Depends(get_current_user_from_jwt)],
 ) -> Response:
-    book = db.query(Book).filter(Book.id == book_id).first()
+    book = (
+        db.query(Book).filter(Book.id == book_id, Book.user_id == UUID(user.id)).first()
+    )
 
     if book is None:
         return Response(status_code=status.HTTP_404_NOT_FOUND)

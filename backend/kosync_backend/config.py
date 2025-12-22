@@ -13,6 +13,9 @@ class Settings(BaseSettings):
 
     client_path: str = "./kosync_client"
 
+    supabase_url: str = ""
+    supabase_key: str = ""
+
 
 @functools.cache
 def get_settings() -> Settings:
