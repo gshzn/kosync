@@ -47,7 +47,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               </div>
             </div>
 
-            <nav className="flex h-full items-center gap-6">
+            <nav className="hidden md:flex h-full items-center gap-6">
               <Link
                 to="/devices"
                 className={cn(
@@ -74,6 +74,58 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
 
           <div className="flex items-center gap-4">
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-screen border-x-0 border-b border-t-0 rounded-none mt-2 -mr-4 bg-background"
+                  style={{ width: '100vw', maxWidth: '100vw' }}
+                >
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/devices"
+                      className={cn(
+                        "w-full py-2",
+                        location.pathname === "/devices" && "font-bold"
+                      )}
+                    >
+                      Device
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/books"
+                      className={cn(
+                        "w-full py-2",
+                        location.pathname === "/books" && "font-bold"
+                      )}
+                    >
+                      Books
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>My Account ({user?.email})</DropdownMenuLabel>
+                  <DropdownMenuItem
+                    className="cursor-pointer text-destructive focus:text-destructive py-2"
+                    onSelect={(event) => {
+                      event.preventDefault();
+                      void signOut();
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            <div className="hidden md:flex items-center gap-4">
             <div className="hidden text-right sm:flex sm:flex-col">
               <span className="text-xs font-medium text-foreground">
                 {user?.email ?? "Signed in"}
@@ -94,7 +146,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <Menu className="hidden h-4 w-4 sm:inline-block" />
+                  <Menu className="hidden h-4 w-4 md:inline-block" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -112,6 +164,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
           </div>
         </div>
       </header>
