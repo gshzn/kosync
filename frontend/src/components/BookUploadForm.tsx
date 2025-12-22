@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ interface BookUploadFormProps {
 
 export function BookUploadForm({ onUploaded }: BookUploadFormProps) {
   const { session } = useAuth();
+  const fileInput = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -43,8 +44,10 @@ export function BookUploadForm({ onUploaded }: BookUploadFormProps) {
         throw new Error(`Upload failed (${response.status})`);
       }
 
-      toast.success("EPUB uploaded. Metadata will be processed shortly.");
+      toast.success("E-book uploaded!");
+      
       setFile(null);
+
       if (onUploaded) {
         onUploaded();
       }
@@ -54,6 +57,10 @@ export function BookUploadForm({ onUploaded }: BookUploadFormProps) {
       toast.error(message);
     } finally {
       setUploading(false);
+      
+      if (fileInput.current) {
+        fileInput.current.value = "";
+      }
     }
   };
 
@@ -74,6 +81,7 @@ export function BookUploadForm({ onUploaded }: BookUploadFormProps) {
           type="file"
           accept=".epub"
           className="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/90"
+          ref={fileInput}
           onChange={(event) => {
             const nextFile = event.target.files?.[0];
             setFile(nextFile ?? null);
