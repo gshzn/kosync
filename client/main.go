@@ -24,11 +24,10 @@ func ShowErrorAndExit(err error) {
 }
 
 func getHttpClient() (*http.Client, error) {
-	// certPool, err := x509.SystemCertPool()
-	certPool := x509.NewCertPool()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	certPool, err := x509.SystemCertPool()
+	if err != nil {
+		return nil, err
+	}
 
 	ok := certPool.AppendCertsFromPEM([]byte(
 		`-----BEGIN CERTIFICATE-----

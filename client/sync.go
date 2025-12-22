@@ -78,13 +78,13 @@ func Synchronise(httpClient http.Client, config *Config) (int, error) {
 	}
 
 	for _, book := range booksToDownload {
-		DownloadFile(&httpClient, book, fmt.Sprintf("%s/%s.epub", config.BooksDirectory, book.Id))
+		DownloadFile(&httpClient, book, fmt.Sprintf("%s/%s.epub", config.BooksDirectory, book.Id), config.Token)
 	}
 
 	return len(booksToDownload), nil
 }
 
-func DownloadFile(httpClient *http.Client, book BookToDownload, pathOnDisk string) error {
+func DownloadFile(httpClient *http.Client, book BookToDownload, pathOnDisk string, accessToken string) error {
 	outputFile, err := os.Create(pathOnDisk)
 	if err != nil {
 		return err
@@ -93,7 +93,16 @@ func DownloadFile(httpClient *http.Client, book BookToDownload, pathOnDisk strin
 
 	log.Printf("Getting file at %s", book.Url)
 
-	resp, err := httpClient.Get(book.Url)
+	request, err := http.NewRequest(
+		"GET", book.Url, nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return err
 	}

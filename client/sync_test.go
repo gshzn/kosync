@@ -43,7 +43,7 @@ func TestDownloadNewFiles(t *testing.T) {
 
 	var url = "http://localhost:8000/api/v1/books/66243753-4F8C-4330-9F9E-6B9EF2F0974E"
 
-	httpmock.RegisterResponder("POST", "/api/v1/sync",
+	httpmock.RegisterMatcherResponder("POST", "http://kosync.test/api/v1/sync/", httpmock.HeaderExists("Authorization"),
 		httpmock.NewStringResponder(200, fmt.Sprintf(`[
 			{
 				"id": "66243753-4F8C-4330-9F9E-6B9EF2F0974E",
@@ -52,7 +52,7 @@ func TestDownloadNewFiles(t *testing.T) {
 		]`, url)).Once(),
 	)
 
-	httpmock.RegisterResponder("GET", url,
+	httpmock.RegisterMatcherResponder("GET", url, httpmock.HeaderExists("Authorization"),
 		httpmock.NewBytesResponder(200, httpmock.File(TEST_BOOK).Bytes()).Once(),
 	)
 
@@ -60,6 +60,8 @@ func TestDownloadNewFiles(t *testing.T) {
 
 	Synchronise(*http.DefaultClient, &Config{
 		BooksDirectory: tempDir,
+		Token:          "foo",
+		Endpoint:       "http://kosync.test/",
 	})
 
 	assert.Equal(t, 2, httpmock.GetTotalCallCount())
