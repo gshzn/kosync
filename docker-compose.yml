@@ -10,8 +10,6 @@ services:
     environment:
       DATABASE_URL: sqlite:////app/db/kosync.db
       UPLOAD_DIR: ./uploads
-      BASE_URL: http://localhost:8080/api
-      ALLOWED_ORIGINS: '["http://localhost:8080"]'
       CLIENT_PATH: ./kosync_client
       SUPABASE_URL: &supabase_url https://fuifiewuljtsqjcqptfy.supabase.co
     restart: unless-stopped
