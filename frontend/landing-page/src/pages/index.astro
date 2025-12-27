@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Navbar } from '@/components/landing/Navbar';
+import Hero from '@/components/landing/Hero.astro';
+import Features from '@/components/landing/Features.astro';
+import HowItWorks from '@/components/landing/HowItWorks.astro';
+import CTA from '@/components/landing/CTA.astro';
+import Footer from '@/components/landing/Footer.astro';
+---
+
+<Layout title="KoSync - Wireless Ebook Syncing for Kobo">
+	<Navbar client:load />
+	<main>
+		<Hero />
+		<Features />
+		<HowItWorks />
+		<CTA />
+	</main>
+	<Footer />
+</Layout>

@@ -1,0 +1,64 @@
+---
+import { Wifi, UploadCloud, RefreshCw, Zap } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+const features = [
+  {
+    icon: Wifi,
+    title: "Completely Wireless",
+    description: "Forget about USB cables. Sync your library over Wi-Fi from anywhere in your home."
+  },
+  {
+    icon: UploadCloud,
+    title: "Simple Uploads",
+    description: "Drag and drop your EPUBs into the web dashboard. We handle the conversion and transfer."
+  },
+  {
+    icon: RefreshCw,
+    title: "Automatic Sync",
+    description: "Your Kobo automatically detects new books. Just tap sync on your device and you're ready."
+  },
+  {
+    icon: Zap,
+    title: "Fast & Lightweight",
+    description: "Minimal impact on your device's battery and storage. Built for performance."
+  }
+];
+---
+
+<section class="bg-secondary/30 py-20" id="features">
+  <div class="container mx-auto px-4">
+    <div class="mb-16 text-center">
+      <h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        Why use KoSync?
+      </h2>
+      <p class="mx-auto max-w-2xl text-muted-foreground">
+        We made syncing books as easy as reading them.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+      {features.map((feature) => (
+        <Card className="transition-shadow hover:shadow-md">
+          <CardHeader>
+            <div class="mb-4 inline-flex w-fit items-center justify-center rounded-full bg-primary/10 p-3">
+              <feature.icon className="h-10 w-10 text-primary" />
+            </div>
+            <CardTitle>{feature.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="text-base">
+              {feature.description}
+            </CardDescription>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
+
