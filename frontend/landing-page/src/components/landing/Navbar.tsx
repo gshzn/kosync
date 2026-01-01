@@ -37,8 +37,13 @@ export const Navbar = () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink href="#" className={navigationMenuTriggerStyle()}>
-                  Docs
+                <NavigationMenuLink href="#how-it-works" className={navigationMenuTriggerStyle()}>
+                  How it works
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#pricing" className={navigationMenuTriggerStyle()}>
+                  Pricing
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -75,11 +80,18 @@ export const Navbar = () => {
                   Features
                 </a>
                 <a 
-                  href="#" 
+                  href="#how-it-works" 
                   className="text-lg font-medium transition-colors hover:text-primary"
                   onClick={() => setIsOpen(false)}
                 >
-                  Docs
+                  How it works
+                </a>
+                <a 
+                  href="#pricing" 
+                  className="text-lg font-medium transition-colors hover:text-primary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Pricing
                 </a>
                 <hr className="my-4 border-border" />
                 <Button variant="ghost" className="justify-start px-0">

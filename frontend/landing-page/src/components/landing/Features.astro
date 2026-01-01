@@ -1,5 +1,5 @@
 ---
-import { Wifi, UploadCloud, RefreshCw, Zap } from 'lucide-react';
+import { Wifi, Zap, RotateCcw } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -11,23 +11,18 @@ import {
 const features = [
   {
     icon: Wifi,
-    title: "Completely Wireless",
-    description: "Forget about USB cables. Sync your library over Wi-Fi from anywhere in your home."
-  },
-  {
-    icon: UploadCloud,
-    title: "Simple Uploads",
-    description: "Drag and drop your EPUBs into the web dashboard. We handle the conversion and transfer."
-  },
-  {
-    icon: RefreshCw,
-    title: "Automatic Sync",
-    description: "Your Kobo automatically detects new books. Just tap sync on your device and you're ready."
+    title: "Wireless",
+    description: "Found a new book to read? Don't worry about hassling with connecting your Kobo device to your computer via a USB cable again."
   },
   {
     icon: Zap,
-    title: "Fast & Lightweight",
-    description: "Minimal impact on your device's battery and storage. Built for performance."
+    title: "Fast and simple",
+    description: "The client on your Kobo device is small and fast - it doesn't add any bloatware to your device."
+  },
+  {
+    icon: RotateCcw,
+    title: "Install once, sync forever",
+    description: "Once you've installed the client on your device, you don't have to worry about connecting your ereader to your PC again."
   }
 ];
 ---
@@ -39,10 +34,10 @@ const features = [
         Why use KoSync?
       </h2>
       <p class="mx-auto max-w-2xl text-muted-foreground">
-        We made syncing books as easy as reading them.
+        KoSync makes uploading books to your Kobo device as easy as reading them.
       </p>
     </div>
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
       {features.map((feature) => (
         <Card className="transition-shadow hover:shadow-md">
           <CardHeader>
