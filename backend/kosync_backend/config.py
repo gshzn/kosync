@@ -13,6 +13,9 @@ class Settings(BaseSettings):
 
     client_path: str = "./kosync_client"
 
+    max_books_per_user: int = 5
+    max_file_size_mb: int = 5
+
     supabase_url: str = ""
     supabase_key: str = ""
 

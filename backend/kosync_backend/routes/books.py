@@ -44,12 +44,30 @@ async def upload_book(
             detail="Only EPUB files are allowed",
         )
 
+    settings = get_settings()
+
+    # Check if user has reached the limit
+    existing_books_count = (
+        db.query(Book).filter(Book.user_id == UUID(user.id)).count()
+    )
+    if existing_books_count >= settings.max_books_per_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Maximum number of books ({settings.max_books_per_user}) reached",
+        )
+
     # Check file size
     content = await file.read()
     file_size = len(content)
 
+    if file_size > settings.max_file_size_mb * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File size exceeds maximum limit of {settings.max_file_size_mb}MB",
+        )
+
     # Save file to disk
-    upload_dir = get_settings().upload_dir
+    upload_dir = settings.upload_dir
     os.makedirs(upload_dir, exist_ok=True)
 
     book_id = uuid4()
