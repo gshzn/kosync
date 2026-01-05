@@ -27,8 +27,9 @@ func GatherSyncedBooks(directory string) ([]string, error) {
 	var fileNames []string
 
 	for _, file := range entries {
-		if fileName, err := uuid.Parse(file.Name()); err == nil {
-			fileNames = append(fileNames, strings.TrimRight(fileName.String(), ".epub"))
+		trimmed_file_name := strings.TrimSuffix(file.Name(), ".epub")
+		if _, err := uuid.Parse(trimmed_file_name); err == nil {
+			fileNames = append(fileNames, trimmed_file_name)
 		}
 	}
 	return fileNames, nil

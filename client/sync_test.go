@@ -17,7 +17,7 @@ func TestSynchroniseGatherFiles(t *testing.T) {
 	tempDir := t.TempDir()
 
 	// Create some test files
-	testFiles := []string{"file1.txt", "file2.txt", "file3.txt"}
+	testFiles := []string{"29CE38BB-EBB5-457C-93A8-D50480CCAFC7.epub", "0FF7C8FB-D51D-4C63-ACEC-B3AA5402165B.epub", "C3DDB812-0289-4B6F-A282-A6F10B117DFD.epub"}
 	for _, file := range testFiles {
 		err := os.WriteFile(tempDir+"/"+file, []byte("test content"), 0644)
 		if err != nil {
@@ -31,7 +31,12 @@ func TestSynchroniseGatherFiles(t *testing.T) {
 		t.Fatalf("GatherLocalFiles failed: %v", err)
 	}
 
-	assert.Equal(t, testFiles, files)
+	var expectedFiles []string
+	for _, f := range testFiles {
+		expectedFiles = append(expectedFiles, strings.TrimSuffix(f, ".epub"))
+	}
+
+	assert.ElementsMatch(t, expectedFiles, files)
 
 	os.RemoveAll(tempDir)
 }
@@ -96,7 +101,7 @@ func copyFile(sourceFile string, dest string) error {
 func TestSynchroniseNothingNew(t *testing.T) {
 	httpmock.Activate(t)
 
-	httpmock.RegisterResponder("POST", "/api/v1/sync",
+	httpmock.RegisterResponder("POST", "/api/v1/sync/",
 		httpmock.NewStringResponder(200, `[]`).Once(),
 	)
 
