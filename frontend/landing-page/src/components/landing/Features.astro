@@ -1,0 +1,59 @@
+---
+import { Wifi, Zap, RotateCcw } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+const features = [
+  {
+    icon: Wifi,
+    title: "Wireless",
+    description: "Found a new book to read? Don't worry about hassling with connecting your Kobo device to your computer via a USB cable again."
+  },
+  {
+    icon: Zap,
+    title: "Fast and simple",
+    description: "The client on your Kobo device is small and fast - it doesn't add any bloatware to your device."
+  },
+  {
+    icon: RotateCcw,
+    title: "Install once, sync forever",
+    description: "Once you've installed the client on your device, you don't have to worry about connecting your ereader to your PC again."
+  }
+];
+---
+
+<section class="bg-secondary/30 py-20" id="features">
+  <div class="container mx-auto px-4">
+    <div class="mb-16 text-center">
+      <h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        Why use KoSync?
+      </h2>
+      <p class="mx-auto max-w-2xl text-muted-foreground">
+        KoSync makes uploading books to your Kobo device as easy as reading them.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      {features.map((feature) => (
+        <Card className="transition-shadow hover:shadow-md">
+          <CardHeader>
+            <div class="mb-4 inline-flex w-fit items-center justify-center rounded-full bg-primary/10 p-3">
+              <feature.icon className="h-10 w-10 text-primary" />
+            </div>
+            <CardTitle>{feature.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="text-base">
+              {feature.description}
+            </CardDescription>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
+

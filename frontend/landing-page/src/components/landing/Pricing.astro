@@ -1,0 +1,112 @@
+---
+import { Check, Cross, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+const plans = [
+  {
+    name: "Free",
+    price: "€0",
+    period: "/month",
+    features: [
+      "5 book uploads limit",
+    ],
+    missing: [
+      "Back up annotations",
+    ],
+    buttonText: "Get Started",
+    buttonVariant: "default",
+    href: import.meta.env.PUBLIC_APP_URL,
+    popular: false,
+    comingSoon: false
+  },
+  {
+    name: "Paid",
+    price: "€2.99",
+    period: "/month",
+    features: [
+      "500 book uploads",
+      "Back up annotations"
+    ],
+    buttonText: "Coming Soon",
+    buttonVariant: "outline",
+    href: "#",
+    popular: true,
+    comingSoon: true
+  }
+];
+---
+
+<section class="py-20" id="pricing">
+  <div class="container mx-auto px-4">
+    <div class="mb-16 text-center">
+      <h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        Simple, transparent pricing
+      </h2>
+      <p class="mx-auto max-w-2xl text-muted-foreground">
+        Choose the plan that's right for your reading habits.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+      {plans.map((plan) => (
+        <Card className={`relative flex flex-col ${plan.popular ? 'border-primary shadow-lg' : ''}`}>
+          {plan.comingSoon && (
+             <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
+              <Badge variant="secondary" className="px-3 py-1 text-xs font-semibold">
+                Coming Soon
+              </Badge>
+            </div>
+          )}
+          <CardHeader>
+            <CardTitle className="text-2xl">{plan.name}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <div class="mb-6 flex items-baseline">
+              <span class="text-4xl font-extrabold tracking-tight">{plan.price}</span>
+              <span class="ml-1 text-muted-foreground">{plan.period}</span>
+            </div>
+            <ul class="space-y-3">
+              {plan.features.map((feature) => (
+                <li class="flex items-center text-muted-foreground">
+                  <Check className="mr-2 h-4 w-4 text-primary" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            <ul class="space-y-3 mt-3">
+              {plan.missing?.map((feature) => (
+                <li class="flex items-center text-muted-foreground">
+                  <X className="mr-2 h-4 w-4 text-red-500" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+          <CardFooter>
+            {plan.comingSoon ?
+              <p class="w-full text-center text-gray text-sm font-medium h-10 px-4 py-2 cursor-default">
+                {plan.buttonText}
+              </p> :
+              <Button 
+                className="w-full" 
+                variant={plan.buttonVariant as "default" | "outline" | "destructive" | "secondary" | "ghost" | "link"}
+                href={plan.href}
+              >
+                {plan.buttonText}
+              </Button>
+            }
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
+

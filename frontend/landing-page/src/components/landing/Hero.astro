@@ -1,0 +1,27 @@
+---
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+---
+
+<section class="relative overflow-hidden bg-background py-20 md:py-32">
+  <div class="container relative z-10 mx-auto px-4 text-center">
+    <div class="mb-8 flex justify-center">
+      <Badge variant="secondary" className="px-4 py-1 text-sm">
+        Now in Beta 🚀
+      </Badge>
+    </div>
+    <h1 class="mb-6 text-4xl font-extrabold tracking-tight text-foreground sm:text-6xl">
+      Upload e-books directly to <br/>your <span class="text-primary">Kobo</span> device
+    </h1>
+    <p class="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+      Send e-books to your Kobo e-reader over the air.<br/>Just upload, sync, and start reading in seconds.
+    </p>
+    <div class="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+      <Button size="lg" className="w-full sm:w-auto" href={import.meta.env.PUBLIC_APP_URL}>
+        Get Started
+      </Button>
+    </div>
+  </div>
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
+</section>
+
