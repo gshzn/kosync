@@ -4,3 +4,4 @@ access_log.jsonl
 .venv/
 uploads/
 kosync.db
+.DS_Store
