@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./db:/app/db
+      - ./uploads:/app/uploads
+    ports: 
+      - "8000:8000"
+    env_file: ".env"
+    environment:
+      DATABASE_URL: sqlite:////app/db/kosync.db
+      UPLOAD_DIR: ./uploads
+      CLIENT_PATH: ./kosync_client
+      SUPABASE_URL: https://fuifiewuljtsqjcqptfy.supabase.co
+    restart: unless-stopped
