@@ -1,10 +1,50 @@
-import { Download, Info, AlertTriangle, Monitor, Apple, Cable, FolderInput, RefreshCw, Menu } from "lucide-react";
+import { Download, Info, AlertTriangle, Monitor, Apple, Cable, FolderInput, RefreshCw, Menu, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { API_BASE_URL } from "../lib/config";
+import { useAuth } from "../contexts/AuthContext";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function ClientInstallSection() {
-  const downloadUrl = `${API_BASE_URL}/download`;
+  const { session } = useAuth();
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!session?.access_token) {
+      toast.error("You must be logged in to download the client.");
+      return;
+    }
+
+    setIsDownloading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/download`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to download file");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "KoboRoot.tgz";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success("Download started!");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download KoboRoot.tgz. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <Card className="relative overflow-hidden transition-all">
@@ -46,11 +86,17 @@ export function ClientInstallSection() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 items-start">
-                <Button asChild variant="default">
-                  <a href={downloadUrl} download="KoboRoot.tgz">
+                <Button 
+                  onClick={handleDownload} 
+                  variant="default" 
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
                     <Download className="mr-2 h-4 w-4" />
-                    Download KoboRoot.tgz
-                  </a>
+                  )}
+                  Download KoboRoot.tgz
                 </Button>
               </div>
 
