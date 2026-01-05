@@ -16,7 +16,6 @@ const plans = [
     name: "Free",
     price: "€0",
     period: "/month",
-    description: "Perfect for casual readers.",
     features: [
       "5 book uploads limit",
     ],
@@ -24,7 +23,8 @@ const plans = [
       "Back up annotations",
     ],
     buttonText: "Get Started",
-    buttonVariant: "outline",
+    buttonVariant: "default",
+    href: import.meta.env.PUBLIC_APP_URL,
     popular: false,
     comingSoon: false
   },
@@ -32,13 +32,13 @@ const plans = [
     name: "Paid",
     price: "€2.99",
     period: "/month",
-    description: "For the avid book collector.",
     features: [
-      "50 book uploads",
+      "500 book uploads",
       "Back up annotations"
     ],
     buttonText: "Coming Soon",
-    buttonVariant: "default",
+    buttonVariant: "outline",
+    href: "#",
     popular: true,
     comingSoon: true
   }
@@ -67,7 +67,6 @@ const plans = [
           )}
           <CardHeader>
             <CardTitle className="text-2xl">{plan.name}</CardTitle>
-            <CardDescription>{plan.description}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
             <div class="mb-6 flex items-baseline">
@@ -92,13 +91,18 @@ const plans = [
             </ul>
           </CardContent>
           <CardFooter>
-            <Button 
-              className="w-full" 
-              variant={plan.buttonVariant as "default" | "outline" | "destructive" | "secondary" | "ghost" | "link"}
-              disabled={plan.comingSoon}
-            >
-              {plan.buttonText}
-            </Button>
+            {plan.comingSoon ?
+              <p class="w-full text-center text-gray text-sm font-medium h-10 px-4 py-2 cursor-default">
+                {plan.buttonText}
+              </p> :
+              <Button 
+                className="w-full" 
+                variant={plan.buttonVariant as "default" | "outline" | "destructive" | "secondary" | "ghost" | "link"}
+                href={plan.href}
+              >
+                {plan.buttonText}
+              </Button>
+            }
           </CardFooter>
         </Card>
       ))}

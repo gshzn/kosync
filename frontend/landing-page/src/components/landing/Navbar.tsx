@@ -49,10 +49,10 @@ export const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" href={import.meta.env.PUBLIC_APP_URL}>
               Sign In
             </Button>
-            <Button size="sm">
+            <Button size="sm" href={import.meta.env.PUBLIC_APP_URL}>
               Get Started
             </Button>
           </div>
@@ -94,10 +94,10 @@ export const Navbar = () => {
                   Pricing
                 </a>
                 <hr className="my-4 border-border" />
-                <Button variant="ghost" className="justify-start px-0">
+                <Button variant="ghost" className="justify-start px-0" href={import.meta.env.PUBLIC_APP_URL}>
                   Sign In
                 </Button>
-                <Button className="justify-start">
+                <Button className="justify-start" href={import.meta.env.PUBLIC_APP_URL}>
                   Get Started
                 </Button>
               </nav>
