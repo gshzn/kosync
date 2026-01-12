@@ -8,6 +8,15 @@ A live version of the project is available at [https://kosync.app](https://kosyn
 
 I was on holiday and I didn't want to bring books, therefore I bought a Kobo e-reader. I shortly after found out I wasn't able to send books to the e-reader without attaching the e-reader to a PC via a cable. 
 
+## How to Use
+
+1. **Sign Up**: Log in with Google at https://kosync.app/
+2. **Install Client**:
+   - Download the generated `KoboRoot.tgz` from the "Devices" section of the dashboard.
+   - Place the `KoboRoot.tgz` update file on your device in the `.kobo` and wait for the KoSync client to be installed.
+3. **Upload Books**: Drag and drop your EPUB files into the web interface.
+4. **Sync**: Use the new KoSync menu entry on your Kobo to synchronise your library. Your new books will be downloaded and automatically added to your Kobo library.
+
 ## Architecture
 
 The KoSync project consists of a few components:
@@ -18,7 +27,7 @@ The KoSync project consists of a few components:
 - Frontend (Web app): A React application with Shadcn components for managing your e-books on the web.
     - Thanks Cursor + Gemini for assisting me on this.
 - Landing Page: A simple landing page built with Astro.
-- Authentication: Managed through Supabase.
+- Authentication: Managed through Supabase and Google SSO.
 
 Finally, for the live version I have running, I set up a NGINX reverse proxy to route all requests to right server/static assets.
 
@@ -36,10 +45,10 @@ GOOS=linux GOARCH=arm go build -o ../backend/kosync_client .
 The backend runs in a Docker container. You need to provide environment variables for Supabase and general configuration.
 
 1. Navigate to the backend directory: `cd backend`
-2. Create a `.env` file with the following contents:
+2. Create a `.env` file with the following contents and adjust according to your setup:
    ```env
    SUPABASE_URL=your_supabase_project_url
-   SUPABASE_KEY=your_supabase_service_role_key
+   SUPABASE_KEY=your_supabase_api_key
    DATABASE_URL=sqlite:////app/db/kosync.db
    BASE_URL=https://api-endpoint
    ALLOWED_ORIGINS=https://frontend-url
@@ -54,7 +63,7 @@ The backend runs in a Docker container. You need to provide environment variable
 #### Web App
 1. Navigate to the app directory: `cd frontend/app`
 2. Install dependencies: `npm install`
-3. Create a `.env` file:
+3. Create a `.env` file and adjust according to your setup:
    ```env
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -70,12 +79,3 @@ The backend runs in a Docker container. You need to provide environment variable
 #### Reverse proxy
 
 Set up a reverse proxy of your choice (e.g. NGINX/Caddy) to route requests to the correct place depending on the host.
-
-## How to Use
-
-1. **Sign Up**: Log in with Google on the 
-2. **Upload Books**: Drag and drop your EPUB files into the web interface.
-3. **Install Client**: 
-   - Download the generated `KoboRoot.tgz` from the "Devices" section of the dashboard.
-   - Place the `KoboRoot.tgz` update file on your device in the `.kobo` and wait for the KoSync client to be installed.
-4. **Sync**: Use the new KoSync menu entry on your Kobo to synchronise your library. Your new books will be downloaded and automatically added to your Kobo library.
