@@ -22,4 +22,4 @@ class Settings(BaseSettings):
 
 @functools.cache
 def get_settings() -> Settings:
-    return Settings()
+    return Settings(_env_file=".env")
