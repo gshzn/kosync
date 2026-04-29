@@ -81,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       toast.error(error.message);
       throw error;
     }
-    toast.success("Check your email to confirm your account");
+    toast.success("Registration successful!");
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
