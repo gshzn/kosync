@@ -19,7 +19,7 @@ from supabase_auth import User as SupabaseUser
 
 from kosync_backend.config import Settings
 from kosync_backend.config import get_settings
-from kosync_backend.database import Book, get_db
+from kosync_backend.database import Book, UserUploadLimit, get_db
 from kosync_backend.epub import (
     extract_epub_cover,
     extract_epub_metadata,
@@ -47,13 +47,22 @@ async def upload_book(
     settings = get_settings()
 
     # Check if user has reached the limit
-    existing_books_count = (
-        db.query(Book).filter(Book.user_id == UUID(user.id)).count()
+    existing_books_count = db.query(Book).filter(Book.user_id == UUID(user.id)).count()
+    upload_limit_record = (
+        db.query(UserUploadLimit)
+        .filter(UserUploadLimit.user_id == UUID(user.id))
+        .first()
     )
-    if existing_books_count >= settings.max_books_per_user:
+    max_uploads = (
+        upload_limit_record.allowed_uploads
+        if upload_limit_record is not None
+        and upload_limit_record.allowed_uploads is not None
+        else settings.max_books_per_user
+    )
+    if existing_books_count >= max_uploads:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Maximum number of books ({settings.max_books_per_user}) reached",
+            detail=f"Maximum number of books ({max_uploads}) reached",
         )
 
     # Check file size
