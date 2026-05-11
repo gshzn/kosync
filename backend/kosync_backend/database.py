@@ -50,6 +50,15 @@ def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Se
         db.close()
 
 
+class UserUploadLimit(Base):
+    __tablename__ = "user_upload_limits"
+
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, index=True
+    )
+    allowed_uploads: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+
 class Book(Base):
     __tablename__ = "books"
 
