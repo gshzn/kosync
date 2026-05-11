@@ -41,7 +41,9 @@ export function BookUploadForm({ onUploaded }: BookUploadFormProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`Upload failed (${response.status})`);
+        const body = await response.json().catch(() => null);
+        const detail = body?.detail ?? `Upload failed (${response.status})`;
+        throw new Error(detail);
       }
 
       toast.success("E-book uploaded!");
