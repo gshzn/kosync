@@ -57,6 +57,7 @@ class UserUploadLimit(Base):
         UUID(as_uuid=True), primary_key=True, index=True
     )
     allowed_uploads: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    max_file_size_mb: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class Book(Base):

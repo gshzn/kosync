@@ -69,10 +69,16 @@ async def upload_book(
     content = await file.read()
     file_size = len(content)
 
-    if file_size > settings.max_file_size_mb * 1024 * 1024:
+    max_file_size_mb = (
+        upload_limit_record.max_file_size_mb
+        if upload_limit_record is not None
+        and upload_limit_record.max_file_size_mb is not None
+        else settings.max_file_size_mb
+    )
+    if file_size > max_file_size_mb * 1024 * 1024:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File size exceeds maximum limit of {settings.max_file_size_mb}MB",
+            detail=f"File size exceeds maximum limit of {max_file_size_mb}MB",
         )
 
     # Save file to disk
