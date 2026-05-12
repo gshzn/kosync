@@ -16,11 +16,20 @@ DUMMY_BOOK = (
 
 
 def _insert_upload_limit(
-    sql_path: Path, user_id: str, allowed_uploads: int | None
+    sql_path: Path,
+    user_id: str,
+    allowed_uploads: int | None = None,
+    max_file_size_mb: int | None = None,
 ) -> None:
     engine = create_engine(f"sqlite:///{sql_path}")
     with Session(engine) as db:
-        db.add(UserUploadLimit(user_id=UUID(user_id), allowed_uploads=allowed_uploads))
+        db.add(
+            UserUploadLimit(
+                user_id=UUID(user_id),
+                allowed_uploads=allowed_uploads,
+                max_file_size_mb=max_file_size_mb,
+            )
+        )
         db.commit()
 
 
@@ -60,7 +69,7 @@ def test_custom_limit_allows_more_uploads(
     app_client: TestClient, sql_path: Path, dummy_user: SupabaseUser
 ) -> None:
     """A UserUploadLimit record with allowed_uploads=8 overrides the default limit."""
-    _insert_upload_limit(sql_path, dummy_user.id, allowed_uploads=8)
+    _insert_upload_limit(sql_path, dummy_user.id, allowed_uploads=8, max_file_size_mb=None)
 
     # All 8 uploads should succeed (beyond the default of 5)
     for i in range(8):
@@ -85,3 +94,34 @@ def test_null_allowed_uploads_falls_back_to_default(
     response = upload_book(app_client, DUMMY_BOOK)
     assert response.status_code == 400
     assert "Maximum number of books (5) reached" in response.json()["detail"]
+
+
+def test_custom_file_size_limit_blocks_large_upload(
+    app_client: TestClient, sql_path: Path, dummy_user: SupabaseUser
+) -> None:
+    """A UserUploadLimit record with max_file_size_mb=0 rejects any upload."""
+    _insert_upload_limit(sql_path, dummy_user.id, max_file_size_mb=0)
+
+    response = upload_book(app_client, DUMMY_BOOK)
+    assert response.status_code == 400
+    assert "File size exceeds maximum limit of 0MB" in response.json()["detail"]
+
+
+def test_custom_file_size_limit_allows_upload_within_limit(
+    app_client: TestClient, sql_path: Path, dummy_user: SupabaseUser
+) -> None:
+    """A UserUploadLimit record with a generous max_file_size_mb allows the upload."""
+    _insert_upload_limit(sql_path, dummy_user.id, max_file_size_mb=100)
+
+    response = upload_book(app_client, DUMMY_BOOK)
+    assert response.is_success
+
+
+def test_null_max_file_size_mb_falls_back_to_default(
+    app_client: TestClient, sql_path: Path, dummy_user: SupabaseUser
+) -> None:
+    """A UserUploadLimit record with max_file_size_mb=None falls back to the default."""
+    _insert_upload_limit(sql_path, dummy_user.id, max_file_size_mb=None)
+
+    response = upload_book(app_client, DUMMY_BOOK)
+    assert response.is_success
