@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="65 10 480 370">
+  <defs>
+    <linearGradient id="phoneBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d2d2d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f0e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ede5d0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phoneScreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f4f8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e6edf5;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#00000033"/>
+    </filter>
+  </defs>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- PHONE (left side)               -->
+  <!-- ═══════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <!-- Phone body -->
+    <rect x="80" y="100" width="120" height="220" rx="16" ry="16" fill="url(#phoneBg)"/>
+    <!-- Phone highlight edge -->
+    <rect x="81" y="101" width="118" height="218" rx="15" ry="15" fill="none" stroke="#444" stroke-width="1"/>
+    <!-- Phone screen -->
+    <!-- Phone screen -->
+    <rect x="85" y="115" width="110" height="188" rx="4" fill="url(#phoneScreen)"/>
+    <!-- Notch / front camera -->
+    <rect x="124" y="104" width="32" height="8" rx="4" fill="#111"/>
+    <!-- Home bar -->
+    <rect x="120" y="308" width="40" height="4" rx="2" fill="#555"/>
+
+    <!-- Phone screen content: file manager / book app -->
+    <rect x="89" y="119" width="102" height="180" rx="3" fill="#f8fafc"/>
+    <!-- App header -->
+    <rect x="89" y="119" width="102" height="22" rx="3" fill="#3b82c4"/>
+    <text x="140" y="134" font-family="Arial, sans-serif" font-size="9" fill="#ffffff" text-anchor="middle" font-weight="bold">KoSync</text>
+
+    <!-- Section label -->
+    <text x="95" y="153" font-family="Arial, sans-serif" font-size="6" fill="#8a9ab0">MY BOOKS</text>
+
+    <!-- Book list items -->
+    <!-- Book 1 (highlighted - being sent) -->
+    <rect x="93" y="158" width="94" height="20" rx="3" fill="#e8f0fb" stroke="#3b82c4" stroke-width="1"/>
+    <path d="M 96 161 L 104 161 L 108 165 L 108 175 L 96 175 Z" fill="#e8b84b"/>
+    <path d="M 104 161 L 108 165 L 104 165 Z" fill="#c8942b"/>
+    <text x="112" y="168" font-family="Arial, sans-serif" font-size="7" fill="#1a2a40" dominant-baseline="central" font-weight="bold">Novel</text>
+
+    <!-- Book 2 -->
+    <rect x="93" y="182" width="94" height="20" rx="3" fill="#ffffff" stroke="#dde4ee" stroke-width="1"/>
+    <path d="M 96 185 L 104 185 L 108 189 L 108 199 L 96 199 Z" fill="#7ec8e3"/>
+    <path d="M 104 185 L 108 189 L 104 189 Z" fill="#5aadcc"/>
+    <text x="112" y="192" font-family="Arial, sans-serif" font-size="7" fill="#3a4a60" dominant-baseline="central">Memoir</text>
+
+    <!-- Book 3 -->
+    <rect x="93" y="206" width="94" height="20" rx="3" fill="#ffffff" stroke="#dde4ee" stroke-width="1"/>
+    <path d="M 96 209 L 104 209 L 108 213 L 108 223 L 96 223 Z" fill="#a8d8a8"/>
+    <path d="M 104 209 L 108 213 L 104 213 Z" fill="#7ab87a"/>
+    <text x="112" y="216" font-family="Arial, sans-serif" font-size="7" fill="#3a4a60" dominant-baseline="central">Science</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- ARCHING LINE + ePUB ICON ABOVE DEVICES             -->
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- Arching dashed line from phone top-right to reader top-left -->
+  <path d="M 201 130 Q 287 20 375 120" fill="none" stroke="#4a9fd4" stroke-width="2" stroke-dasharray="6,4" stroke-linecap="round"/>
+
+  <!-- Arrowhead at e-reader end, aligned to curve tangent -->
+  <polygon points="375,120 365,116 372,109" fill="#4a9fd4"/>
+
+  <!-- ePUB file icon at top of arch (approx midpoint t=0.5) -->
+  <g transform="translate(274, 48)">
+    <!-- File shadow -->
+    <rect x="3" y="3" width="26" height="34" rx="3" fill="#00000022"/>
+    <!-- File body -->
+    <rect x="0" y="0" width="26" height="34" rx="3" fill="#e8b84b"/>
+    <!-- Folded corner -->
+    <path d="M 18 0 L 26 8 L 18 8 Z" fill="#c8942b"/>
+    <!-- Lines representing text -->
+    <line x1="4" y1="30" x2="22" y2="30" stroke="#c8942b" stroke-width="1.5"/>
+  </g>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- E-READER (right side)              -->
+  <!-- ═══════════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <!-- Reader outer body -->
+    <rect x="375" y="80" width="150" height="240" rx="12" fill="#3a3530"/>
+    <!-- Reader bezel highlight -->
+    <rect x="376" y="81" width="148" height="238" rx="11" fill="none" stroke="#504a44" stroke-width="1"/>
+
+    <!-- E-ink screen area -->
+    <rect x="395" y="100" width="110" height="190" rx="4" fill="url(#screenGrad)"/>
+    <!-- Screen border/shadow inner -->
+    <rect x="395" y="100" width="110" height="190" rx="4" fill="none" stroke="#c8bfaa" stroke-width="1.5"/>
+
+    <!-- E-reader library list -->
+    <!-- Library header -->
+    <rect x="395" y="100" width="110" height="22" rx="4" fill="#d6cbb8"/>
+    <text x="450" y="115" font-family="Georgia, serif" font-size="9" fill="#2a2218" text-anchor="middle" font-weight="bold">Library</text>
+    <line x1="395" y1="122" x2="505" y2="122" stroke="#bbb" stroke-width="0.8"/>
+
+    <!-- Book 1: Novel (highlighted - matches phone Book 1) -->
+    <rect x="399" y="128" width="102" height="44" rx="3" fill="#e0d4bc" stroke="#bbb0" stroke-width="1"/>
+    <!-- Book cover thumbnail -->
+    <rect x="403" y="132" width="26" height="36" rx="2" fill="#e8b84b"/>
+    <path d="M 421 132 L 429 140 L 421 140 Z" fill="#c8942b"/>
+    <line x1="406" y1="156" x2="426" y2="156" stroke="#c8942b" stroke-width="1"/>
+    <line x1="406" y1="160" x2="424" y2="160" stroke="#c8942b" stroke-width="0.8"/>
+    <!-- Book info -->
+    <text x="434" y="144" font-family="Georgia, serif" font-size="8" fill="#1a1008" font-weight="bold">Novel</text>
+    <text x="434" y="156" font-family="Georgia, serif" font-size="6" fill="#5a4a30">Fiction</text>
+    <!-- Progress bar -->
+    <rect x="434" y="162" width="62" height="3" rx="1.5" fill="#c8bfaa"/>
+    <rect x="434" y="162" width="38" height="3" rx="1.5" fill="#c8942b"/>
+
+    <!-- Book 2: Memoir (matches phone Book 2) -->
+    <rect x="399" y="178" width="102" height="44" rx="3" fill="#f0ebe0" stroke="#bbb0" stroke-width="1"/>
+    <!-- Book cover thumbnail -->
+    <rect x="403" y="182" width="26" height="36" rx="2" fill="#7ec8e3"/>
+    <path d="M 421 182 L 429 190 L 421 190 Z" fill="#5aadcc"/>
+    <line x1="406" y1="206" x2="426" y2="206" stroke="#5aadcc" stroke-width="1"/>
+    <line x1="406" y1="210" x2="424" y2="210" stroke="#5aadcc" stroke-width="0.8"/>
+    <!-- Book info -->
+    <text x="434" y="194" font-family="Georgia, serif" font-size="8" fill="#1a1008" font-weight="bold">Memoir</text>
+    <text x="434" y="206" font-family="Georgia, serif" font-size="6" fill="#5a4a30">Non-fiction</text>
+    <!-- Progress bar -->
+    <rect x="434" y="212" width="62" height="3" rx="1.5" fill="#c8bfaa"/>
+    <rect x="434" y="212" width="15" height="3" rx="1.5" fill="#5aadcc"/>
+
+    <!-- Book 3: Science (matches phone Book 3) -->
+    <rect x="399" y="228" width="102" height="44" rx="3" fill="#f0ebe0" stroke="#bbb0" stroke-width="1"/>
+    <!-- Book cover thumbnail -->
+    <rect x="403" y="232" width="26" height="36" rx="2" fill="#a8d8a8"/>
+    <path d="M 421 232 L 429 240 L 421 240 Z" fill="#7ab87a"/>
+    <line x1="406" y1="256" x2="426" y2="256" stroke="#7ab87a" stroke-width="1"/>
+    <line x1="406" y1="260" x2="424" y2="260" stroke="#7ab87a" stroke-width="0.8"/>
+    <!-- Book info -->
+    <text x="434" y="244" font-family="Georgia, serif" font-size="8" fill="#1a1008" font-weight="bold">Science</text>
+    <text x="434" y="256" font-family="Georgia, serif" font-size="6" fill="#5a4a30">Non-fiction</text>
+    <!-- Progress bar -->
+    <rect x="434" y="262" width="62" height="3" rx="1.5" fill="#c8bfaa"/>
+    <rect x="434" y="262" width="5" height="3" rx="1.5" fill="#7ab87a"/>
+
+  </g>
+</svg>
