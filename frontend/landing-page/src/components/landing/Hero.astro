@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
           </Badge>
         </div>
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-foreground sm:text-6xl">
-          Upload e-books directly to your <br class="hidden md:block"/> <span class="text-primary">Kobo</span> device
+          Upload e-books directly to your <span class="text-primary">Kobo</span> device
         </h1>
         <p class="mb-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
           Send e-books to your Kobo e-reader over the air.<br/>Just upload, sync, and start reading in seconds.
@@ -29,12 +29,13 @@ import { Badge } from '@/components/ui/badge';
 
       <!-- Right: illustration -->
       <div class="flex justify-center lg:justify-end">
-        <img
-          src="/ereader-sync.svg"
-          alt="KoSync syncing an e-book from phone to Kobo e-reader"
-          class="w-full"
-          aria-hidden="true"
-        />
+        <object
+          data="/ereader-sync.svg"
+          type="image/svg+xml"
+          class="block w-full"
+          style="aspect-ratio: 700 / 540"
+          aria-label="KoSync syncing an e-book from phone to Kobo e-reader"
+        ></object>
       </div>
 
     </div>
