@@ -1,0 +1,39 @@
+---
+import { AstroAccordion, type FAQItem } from "@/components/ui/faqAccordion";
+
+const faqs: FAQItem[] = [
+  {
+    title: "What is KoSync?",
+    description:
+      "KoSync allows you to send e-books to your Kobo e-reader by simply uploading files on your phone and clicking a button on your e-reader.",
+  },
+  {
+    title: "How can I install KoSync?",
+    description:
+      "First, get started by creating an account using Google or your e-mail address. Then, follow the steps to install the KoSync application on your e-reader. Finally, upload your favourite book on KoSync and hit Synchronise on your e-reader and start reading!",
+  },
+  {
+    title: "How much does KoSync cost?",
+    description:
+      "Currently, KoSync is in beta and is free for storing up to 5 books. In the future, paid plans will be rolled out which allow for synchronising more books.",
+  },
+];
+---
+
+<section class="py-20 bg-secondary/30" id="faq">
+  <div class="container mx-auto px-4">
+    <div class="mb-16 text-center">
+      <h2
+        class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+      >
+        Frequently Asked Questions
+      </h2>
+      <p class="mx-auto max-w-2xl text-muted-foreground">
+        Everything you need to know about KoSync.
+      </p>
+    </div>
+    <div class="mx-auto max-w-2xl">
+      <AstroAccordion client:idle items={faqs} />
+    </div>
+  </div>
+</section>

@@ -46,6 +46,11 @@ export const Navbar = () => {
                   Pricing
                 </NavigationMenuLink>
               </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#faq" className={navigationMenuTriggerStyle()}>
+                  FAQ
+                </NavigationMenuLink>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-2">
@@ -86,12 +91,19 @@ export const Navbar = () => {
                 >
                   How it works
                 </a>
-                <a 
-                  href="#pricing" 
+                <a
+                  href="#pricing"
                   className="text-lg font-medium transition-colors hover:text-primary"
                   onClick={() => setIsOpen(false)}
                 >
                   Pricing
+                </a>
+                <a
+                  href="#faq"
+                  className="text-lg font-medium transition-colors hover:text-primary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  FAQ
                 </a>
                 <hr className="my-4 border-border" />
                 <Button variant="ghost" className="justify-start px-0" href={import.meta.env.PUBLIC_APP_URL}>
