@@ -8,17 +8,67 @@ import Pricing from '@/components/landing/Pricing.astro';
 import FAQ from '@/components/landing/FAQ.astro';
 import CTA from '@/components/landing/CTA.astro';
 import Footer from '@/components/landing/Footer.astro';
+
+const softwareAppSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'KoSync',
+  description: 'Send e-books to your Kobo e-reader over the air. Just upload, sync, and start reading in seconds.',
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Free during beta – store and sync up to 5 books.',
+  },
+});
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is KoSync?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'KoSync allows you to send e-books to your Kobo e-reader by simply uploading files on your phone and clicking a button on your e-reader.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How can I install KoSync?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'First, get started by creating an account using Google or your e-mail address. Then, follow the steps to install the KoSync application on your e-reader. Finally, upload your favourite book on KoSync and hit Synchronise on your e-reader and start reading!',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much does KoSync cost?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Currently, KoSync is in beta and is free for storing up to 5 books. In the future, paid plans will be rolled out which allow for synchronising more books.',
+      },
+    },
+  ],
+});
 ---
 
-<Layout title="KoSync - Wireless Ebook Syncing for Kobo">
-	<Navbar client:load />
-	<main>
-		<Hero />
-		<Features />
-		<HowItWorks />
-		<Pricing />
-		<CTA />
-		<FAQ />
-	</main>
-	<Footer />
+<Layout>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={softwareAppSchema} />
+    <script type="application/ld+json" set:html={faqSchema} />
+  </Fragment>
+  <Navbar client:load />
+  <main>
+    <Hero />
+    <Features />
+    <HowItWorks />
+    <Pricing />
+    <CTA />
+    <FAQ />
+  </main>
+  <Footer />
 </Layout>

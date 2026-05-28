@@ -1,14 +1,62 @@
 ---
-import '../styles/globals.css';
+import "../styles/globals.css";
+
+interface Props {
+	title: string;
+	description?: string;
+	ogImage?: string;
+}
+
+const title = "KoSync | Send e-books to your Kobo e-reader wirelessly";
+const description =
+	"KoSync allows you to send e-books to your Kobo e-reader over the air. Just upload, sync, and start reading in seconds.";
+const ogImage = "favicon.ico";
+
+const SITE_URL = "https://kosync.app";
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+const ogImageURL = ogImage ? new URL(ogImage, SITE_URL).toString() : undefined;
+
+const websiteSchema = JSON.stringify({
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	name: "KoSync",
+	url: SITE_URL,
+});
 ---
+
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>KoSync</title>
+		<meta name="generator" content="Astro" />
+
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="robots" content="index, follow" />
+		<link rel="canonical" href={canonicalURL} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:site_name" content="KoSync" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		{ogImageURL && <meta property="og:image" content={ogImageURL} />}
+
+		<meta
+			name="twitter:card"
+			content={ogImageURL ? "summary_large_image" : "summary"}
+		/>
+		<meta name="twitter:url" content={canonicalURL} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		{ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
+
+		<script type="application/ld+json" set:html={websiteSchema} />
+
+		<slot name="head" />
 	</head>
 	<body>
 		<slot />
