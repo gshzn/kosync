@@ -47,6 +47,11 @@ export const Navbar = () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
+                <NavigationMenuLink href="#about" className={navigationMenuTriggerStyle()}>
+                  About
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
                 <NavigationMenuLink href="#faq" className={navigationMenuTriggerStyle()}>
                   FAQ
                 </NavigationMenuLink>
@@ -97,6 +102,13 @@ export const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                 >
                   Pricing
+                </a>
+                <a
+                  href="#about"
+                  className="text-lg font-medium transition-colors hover:text-primary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  About
                 </a>
                 <a
                   href="#faq"
