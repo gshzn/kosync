@@ -8,6 +8,7 @@ import Pricing from '@/components/landing/Pricing.astro';
 import FAQ from '@/components/landing/FAQ.astro';
 import CTA from '@/components/landing/CTA.astro';
 import Footer from '@/components/landing/Footer.astro';
+import About from '@/components/landing/About.astro';
 
 const softwareAppSchema = JSON.stringify({
   '@context': 'https://schema.org',
@@ -67,7 +68,8 @@ const faqSchema = JSON.stringify({
     <Features />
     <HowItWorks />
     <Pricing />
-    <CTA />
+    <About />
+	<CTA />
     <FAQ />
   </main>
   <Footer />
