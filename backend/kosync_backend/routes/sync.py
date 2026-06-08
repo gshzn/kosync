@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, RootModel, UUID4
 from sqlalchemy.orm import Session
 
-from kosync_backend.database import Book, get_db
+from kosync_backend.database import Book, Synchronisation, get_db
 from kosync_backend.config import Settings
 from kosync_backend.config import get_settings
 from kosync_backend.user_middleware import get_current_user_from_id
@@ -42,9 +42,19 @@ async def synchronise(
     )
 
     if len(missing_books) == 0:
+        db.add(Synchronisation(user_id=UUID(user.id), book_ids=[]))
+        db.commit()
         return SynchroniseResponse([])
 
     missing_books = [b for b in available_books if str(b.id) in missing_books]
+
+    db.add(
+        Synchronisation(
+            user_id=UUID(user.id),
+            book_ids=[str(book.id) for book in missing_books],
+        )
+    )
+    db.commit()
 
     return SynchroniseResponse(
         [
