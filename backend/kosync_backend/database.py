@@ -1,13 +1,16 @@
 from collections.abc import Generator
 from datetime import datetime
+from datetime import timezone
 from typing import Annotated
 
 from fastapi import Depends
+import sqlalchemy
 from sqlalchemy import (
     UUID,
     DateTime,
     Engine,
     Integer,
+    JSON,
     LargeBinary,
     String,
     Text,
@@ -50,6 +53,23 @@ def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Generator[Se
         db.close()
 
 
+class DateTimeUtc(sqlalchemy.types.TypeDecorator):
+    impl = sqlalchemy.types.DateTime
+    LOCAL_TIMEZONE = datetime.now(timezone.utc).astimezone().tzinfo
+
+    def process_bind_param(self, value: datetime, dialect):
+        if value.tzinfo is None:
+            value = value.astimezone(self.LOCAL_TIMEZONE)
+
+        return value.astimezone(timezone.utc)
+
+    def process_result_value(self, value, dialect):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+
+        return value.astimezone(timezone.utc)
+
+
 class UserUploadLimit(Base):
     __tablename__ = "user_upload_limits"
 
@@ -76,6 +96,19 @@ class Book(Base):
     cover_image: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
     file_path: Mapped[str] = mapped_column(String, nullable=False)
     file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    upload_date: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+    upload_date: Mapped[DateTimeUtc] = mapped_column(
+        DateTimeUtc(timezone=True), server_default=func.now()
+    )
+
+
+class Synchronisation(Base):
+    __tablename__ = "synchronisations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), index=True, nullable=False
+    )
+    book_ids: Mapped[list] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[DateTimeUtc] = mapped_column(
+        DateTimeUtc(timezone=True), server_default=func.now()
     )

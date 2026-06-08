@@ -10,11 +10,13 @@ import httpx
 import pytest
 from supabase_auth import User as SupabaseUser
 
+from kosync_backend.database import get_db, get_engine, SessionLocal
 from kosync_backend.main import get_app
 from kosync_backend.user_middleware import (
     get_current_user_from_jwt,
     get_current_user_from_id,
 )
+from kosync_backend.config import get_settings
 
 
 @contextlib.contextmanager
@@ -89,6 +91,7 @@ def app_client(
             "BASE_URL": "http://kosync.test/",
             "SUPABASE_URL": "https://test.supabase.co",
             "SUPABASE_KEY": "test-key",
+            "CLIENT_PATH": str(Path(__file__).parent.parent / "kosync_client"),
         }
     ):
         app = get_app()
@@ -100,6 +103,17 @@ def app_client(
         with TestClient(app, raise_server_exceptions=True) as client:
             client.headers.update({"Authorization": "Bearer test-token"})
             yield client
+
+
+@pytest.fixture
+def db_session(app_client: TestClient) -> Generator:
+    settings = get_settings()
+    engine = get_engine(settings)
+    session = SessionLocal(bind=engine)
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 def upload_book(app_client: TestClient, book: Path) -> httpx.Response:
