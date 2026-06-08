@@ -86,7 +86,9 @@ class Synchronisation(Base):
     __tablename__ = "synchronisations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), index=True, nullable=False)
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), index=True, nullable=False
+    )
     book_ids: Mapped[list] = mapped_column(JSON, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
