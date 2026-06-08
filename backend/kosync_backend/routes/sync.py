@@ -41,11 +41,6 @@ async def synchronise(
         str(b) for b in request.root
     )
 
-    if len(missing_books) == 0:
-        db.add(Synchronisation(user_id=UUID(user.id), book_ids=[]))
-        db.commit()
-        return SynchroniseResponse([])
-
     missing_books = [b for b in available_books if str(b.id) in missing_books]
 
     db.add(
