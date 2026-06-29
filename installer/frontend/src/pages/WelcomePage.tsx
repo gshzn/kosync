@@ -4,13 +4,15 @@ import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListKoboDevices } from "../../wailsjs/go/main/App";
+import { BrowserOpenURL } from "../../wailsjs/runtime/runtime";
 import type { main } from "../../wailsjs/go/models";
 
 interface WelcomePageProps {
   user: User;
 }
 
-export function WelcomePage({ user: _user }: WelcomePageProps) {
+export function WelcomePage({ user }: WelcomePageProps) {
+  const displayName = (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "you";
   const [devices, setDevices] = useState<main.KoboDevice[]>([]);
 
   useEffect(() => {
@@ -59,6 +61,15 @@ export function WelcomePage({ user: _user }: WelcomePageProps) {
             )}
           </CardContent>
         </Card>
+        <p className="text-center text-sm text-muted-foreground">
+          Signed in as {displayName}.{" "}
+          <button
+            className="underline hover:text-foreground"
+            onClick={() => BrowserOpenURL(`${import.meta.env.VITE_KOSYNC_APP_URL}/login?desktop_redirect=true`)}
+          >
+            Not you? Sign in with a different account
+          </button>
+        </p>
       </div>
     </div>
   );
