@@ -48,6 +48,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else {
         setSession(data.session);
         setUser(data.session?.user ?? null);
+        if (
+          isDesktopRedirect.current &&
+          data.session?.access_token &&
+          data.session?.refresh_token
+        ) {
+          window.location.href = `http://127.0.0.1:45289/callback?access_token=${data.session.access_token}&refresh_token=${data.session.refresh_token}`;
+          return;
+        }
       }
       setLoading(false);
     };
@@ -65,7 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         newSession?.access_token &&
         newSession?.refresh_token
       ) {
-        window.location.href = `http://localhost:45289/callback?access_token=${newSession.access_token}&refresh_token=${newSession.refresh_token}`;
+        window.location.href = `http://127.0.0.1:45289/callback?access_token=${newSession.access_token}&refresh_token=${newSession.refresh_token}`;
       }
     });
 
