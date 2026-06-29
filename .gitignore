@@ -1,7 +1,12 @@
 .idea/
 .python-version
+.env
 access_log.jsonl
 .venv/
 uploads/
 kosync.db
 .DS_Store
+.vscode
+.cursor
+CLAUDE.md
+.kosyncConfig.json
