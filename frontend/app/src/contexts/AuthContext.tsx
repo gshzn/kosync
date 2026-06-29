@@ -37,48 +37,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   useEffect(() => {
-    let isMounted = true;
-
-    const init = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (!isMounted) return;
-
-      if (error) {
-        console.error("Error getting session", error);
-      } else {
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-        if (
-          isDesktopRedirect.current &&
-          data.session?.access_token &&
-          data.session?.refresh_token
-        ) {
-          window.location.href = `http://127.0.0.1:45289/callback?access_token=${data.session.access_token}&refresh_token=${data.session.refresh_token}`;
-          return;
-        }
-      }
-      setLoading(false);
-    };
-
-    void init();
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
       if (
-        event === "SIGNED_IN" &&
+        (event === "SIGNED_IN" || event === "INITIAL_SESSION") &&
         isDesktopRedirect.current &&
         newSession?.access_token &&
         newSession?.refresh_token
       ) {
         window.location.href = `http://127.0.0.1:45289/callback?access_token=${newSession.access_token}&refresh_token=${newSession.refresh_token}`;
-      }
+     } else {
+      setLoading(false);
+     }
     });
 
     return () => {
-      isMounted = false;
       subscription.unsubscribe();
     };
   }, []);
