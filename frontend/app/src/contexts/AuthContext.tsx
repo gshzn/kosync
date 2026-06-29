@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   ReactNode,
 } from "react";
@@ -31,6 +32,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const isDesktopRedirect = useRef(
+    new URLSearchParams(window.location.search).get("desktop_redirect") === "true"
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -52,9 +56,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
+      if (
+        event === "SIGNED_IN" &&
+        isDesktopRedirect.current &&
+        newSession?.access_token &&
+        newSession?.refresh_token
+      ) {
+        window.location.href = `http://localhost:45289/callback?access_token=${newSession.access_token}&refresh_token=${newSession.refresh_token}`;
+      }
     });
 
     return () => {
@@ -85,11 +97,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
+    const redirectTo = isDesktopRedirect.current
+      ? `${window.location.origin}/?desktop_redirect=true`
+      : window.location.origin;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-      },
+      options: { redirectTo },
     });
     if (error) {
       toast.error(error.message);
