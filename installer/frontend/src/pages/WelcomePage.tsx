@@ -4,14 +4,14 @@ import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListKoboDevices } from "../../wailsjs/go/main/App";
-import { BrowserOpenURL } from "../../wailsjs/runtime/runtime";
 import type { main } from "../../wailsjs/go/models";
 
 interface WelcomePageProps {
   user: User;
+  onSignOut: () => void;
 }
 
-export function WelcomePage({ user }: WelcomePageProps) {
+export function WelcomePage({ user, onSignOut }: WelcomePageProps) {
   const displayName = (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "you";
   const [devices, setDevices] = useState<main.KoboDevice[]>([]);
 
@@ -41,7 +41,7 @@ export function WelcomePage({ user }: WelcomePageProps) {
               {device ? device.name : "No device found"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4 py-8">
+          <CardContent className="flex flex-col items-center gap-4">
             {device ? (
               <>
                 <p className="text-sm text-muted-foreground">{device.mountPath}</p>
@@ -62,12 +62,12 @@ export function WelcomePage({ user }: WelcomePageProps) {
           </CardContent>
         </Card>
         <p className="text-center text-sm text-muted-foreground">
-          Signed in as {displayName}.{" "}
+          Signed in as {displayName}. Not you? 
           <button
-            className="underline hover:text-foreground"
-            onClick={() => BrowserOpenURL(`${import.meta.env.VITE_KOSYNC_APP_URL}/login?desktop_redirect=true`)}
+            className="pl-1 underline hover:text-foreground"
+            onClick={onSignOut}
           >
-            Not you? Sign in with a different account
+            Sign in with a different account
           </button>
         </p>
       </div>
