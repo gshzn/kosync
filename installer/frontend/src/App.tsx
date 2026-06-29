@@ -24,7 +24,7 @@ function App() {
     return () => EventsOff("auth-complete");
   }, []);
 
-  if (user) return <WelcomePage user={user} />;
+  if (user) return <WelcomePage user={user} onSignOut={() => setUser(null)} />;
   return <LoginPage />;
 }
 
