@@ -41,7 +41,7 @@ export function WelcomePage({ user, onSignOut }: WelcomePageProps) {
               {device ? device.name : "No device found"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
+          <CardContent className="flex flex-col text-center items-center gap-4">
             {device ? (
               <>
                 <p className="text-sm text-muted-foreground">{device.mountPath}</p>
@@ -56,6 +56,9 @@ export function WelcomePage({ user, onSignOut }: WelcomePageProps) {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 <p className="text-sm text-muted-foreground">
                   Connect your Kobo e-reader to this PC via USB.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Make sure to tap <span className="font-semibold">Connect</span> on your Kobo's screen to allow access.
                 </p>
               </>
             )}
