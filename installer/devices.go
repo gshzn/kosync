@@ -13,62 +13,88 @@ type KoboDevice struct {
 	MountPath string `json:"mountPath"`
 }
 
-func kobosFromPaths(paths []string) []KoboDevice {
+type mountPoint struct {
+	path string
+	name string
+}
+
+func kobosFromMounts(mounts []mountPoint) []KoboDevice {
 	devices := []KoboDevice{}
-	for _, p := range paths {
-		if _, err := os.Stat(filepath.Join(p, ".kobo")); err == nil {
+	for _, m := range mounts {
+		if _, err := os.Stat(filepath.Join(m.path, ".kobo")); err == nil {
 			devices = append(devices, KoboDevice{
-				Name:      filepath.Base(p),
-				MountPath: p,
+				Name:      m.name,
+				MountPath: m.path,
 			})
 		}
 	}
 	return devices
 }
 
-func getMountPathsDarwin() []string {
+func getMountsDarwin() []mountPoint {
 	entries, err := os.ReadDir("/Volumes")
 	if err != nil {
 		return nil
 	}
-	var paths []string
+	var mounts []mountPoint
 	for _, e := range entries {
 		if e.IsDir() || e.Type()&os.ModeSymlink != 0 {
-			paths = append(paths, filepath.Join("/Volumes", e.Name()))
+			mounts = append(mounts, mountPoint{
+				path: filepath.Join("/Volumes", e.Name()),
+				name: e.Name(),
+			})
 		}
 	}
-	return paths
+	return mounts
 }
 
-func getMountPathsWindows() []string {
-	out, err := exec.Command(
+func parseWindowsMounts(out string) []mountPoint {
+	var mounts []mountPoint
+	for _, line := range strings.Split(out, "\n") {
+		line = strings.TrimSpace(line)
+		fields := strings.Fields(line)
+		if len(fields) == 0 {
+			continue
+		}
+		first := fields[0]
+		if len(first) == 2 && first[1] == ':' && first[0] >= 'A' && first[0] <= 'Z' {
+			name := first
+			if len(fields) >= 2 {
+				name = fields[1]
+			}
+			mounts = append(mounts, mountPoint{
+				path: first + `\`,
+				name: name,
+			})
+		}
+	}
+	return mounts
+}
+
+func getMountsWindows() []mountPoint {
+	cmd := exec.Command(
 		"powershell", "-NoProfile", "-Command",
-		`Get-WmiObject Win32_LogicalDisk -Filter "DriveType=2" | Select-Object -ExpandProperty DeviceID`,
-	).Output()
+		`Get-WmiObject Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 } | Select-Object DeviceID, VolumeName`,
+	)
+	setSysProcAttr(cmd)
+	out, err := cmd.Output()
 	if err != nil {
 		return nil
 	}
-	var paths []string
-	for _, line := range strings.Split(string(out), "\n") {
-		line = strings.TrimSpace(line)
-		if len(line) == 2 && line[1] == ':' {
-			paths = append(paths, line+`\`)
-		}
-	}
-	return paths
+	return parseWindowsMounts(string(out))
 }
 
-func getRemovableMountPaths() []string {
+func getRemovableMounts() []mountPoint {
 	switch runtime.GOOS {
 	case "darwin":
-		return getMountPathsDarwin()
+		return getMountsDarwin()
 	case "windows":
-		return getMountPathsWindows()
+		return getMountsWindows()
 	default:
 		return nil
 	}
 }
 
 func (a *App) ListKoboDevices() []KoboDevice {
-	return kobosFromPaths(getRemovableMountPaths())
+	return kobosFromMounts(getRemovableMounts())
 }
