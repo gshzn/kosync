@@ -20,12 +20,14 @@ function SuccessScreen() {
       <CheckCircle2 className="h-12 w-12 text-green-500" />
       <h2 className="text-xl font-semibold">KoSync installed!</h2>
       <p className="text-sm text-muted-foreground">
-        Your Kobo will update the next time it restarts. After the update,
-        you'll find <span className="font-semibold">KoSync</span> in the
-        bottom-right menu on your Kobo.
-      </p>
-      <p className="text-sm font-medium text-amber-600">
-        Don't forget to safely eject your e-reader before unplugging.
+        The installation was successful. You can now safely eject your e-reader.
+        It will finish the installation by updating.
+        </p>
+        <p className="text-sm text-muted-foreground">
+        After the update,
+        you'll find the KoSync app in the bottom-right menu on your Kobo. 
+        In the menu, hit Synchronise to download
+        the books from your KoSync account!
       </p>
     </div>
   );

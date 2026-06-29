@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-var apiURL string
+var apiURL = "https://api.kosync.app"
 
 func installKoSync(mountPath, accessToken, baseURL string) (bool, error) {
 	req, err := http.NewRequest(http.MethodGet, baseURL+"/api/v1/download", nil)
