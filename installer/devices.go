@@ -42,7 +42,8 @@ func getMountPathsDarwin() []string {
 
 func getMountPathsWindows() []string {
 	out, err := exec.Command(
-		"wmic", "logicaldisk", "where", "DriveType=2", "get", "DeviceID",
+		"powershell", "-NoProfile", "-Command",
+		`Get-WmiObject Win32_LogicalDisk -Filter "DriveType=2" | Select-Object -ExpandProperty DeviceID`,
 	).Output()
 	if err != nil {
 		return nil
