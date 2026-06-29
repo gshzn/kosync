@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { openBrowser } from "@/lib/wailsBindings";
+import { BrowserOpenURL } from "../../wailsjs/runtime/runtime";
 
 export function LoginPage() {
   useEffect(() => {
-    openBrowser("https://app.kosync.app/login?desktop_redirect=true");
+    BrowserOpenURL(`${import.meta.env.VITE_KOSYNC_APP_URL}/login?desktop_redirect=true`);
   }, []);
 
   return (

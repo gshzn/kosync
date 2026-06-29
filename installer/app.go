@@ -49,12 +49,6 @@ func (a *App) handleCallback(w http.ResponseWriter, r *http.Request) {
 		"refresh_token": refreshToken,
 	})
 	runtime.WindowShow(a.ctx)
-	runtime.WindowSetAlwaysOnTop(a.ctx, true)
-	runtime.WindowSetAlwaysOnTop(a.ctx, false)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_, _ = w.Write([]byte(`<!DOCTYPE html><html><head><title>Kosync</title></head><body style="font-family:system-ui;text-align:center;padding:4rem"><h2>Authentication successful</h2><p>You can close this tab and return to the installer.</p></body></html>`))
-}
-
-func (a *App) OpenBrowser(url string) {
-	runtime.BrowserOpenURL(a.ctx, url)
 }
