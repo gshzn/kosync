@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
-import { EventsOn } from "../wailsjs/runtime/runtime";
+import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
 import { supabase } from "./lib/supabaseClient";
 import { LoginPage } from "./pages/LoginPage";
 import { WelcomePage } from "./pages/WelcomePage";
@@ -21,6 +21,7 @@ function App() {
         }
       }
     );
+    return () => EventsOff("auth-complete");
   }, []);
 
   if (user) return <WelcomePage user={user} />;
